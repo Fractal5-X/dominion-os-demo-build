@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominion OS Store - Sovereign AI Infrastructure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .product-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .product-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .product-features li:before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .pricing {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .price-period {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sovereign-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="sovereign-badge">🔒 Maximum Sovereign Power: 9/9</div>
+            <h1>Dominion OS Store</h1>
+            <p>Complete Sovereign AI Infrastructure Solutions</p>
+        </header>
+
+        <section class="products" id="products">
+            <!-- Products will be loaded dynamically -->
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2024 Dominion OS. All rights reserved. | Sovereign AI Infrastructure</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load products dynamically
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                // Fallback to static products
+                displayStaticProducts();
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products');
+            container.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-icon">${getProductIcon(product.name)}</div>
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <ul class="product-features">
+                        ${product.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    <div class="pricing">
+                        <div class="price">$${getPricingDisplay(product.pricing)}</div>
+                        <div class="price-period">${getPricingPeriod(product.pricing)}</div>
+                    </div>
+                    <button class="btn" onclick="purchaseProduct('${product.sku}')">Purchase Now</button>
+                </div>
+            `).join('');
+        }
+
+        function displayStaticProducts() {
+            const products = [
+                {
+                    name: "Dominion OS 1.0 - Google Cloud",
+                    description: "Complete sovereign AI infrastructure deployed on Google Cloud Platform",
+                    features: ["MCP deployment automation", "Sovereign AI infrastructure", "24/7 monitoring", "Security hardening"],
+                    pricing: { monthly: 299 },
+                    sku: "DOM-OS-GCLOUD-001"
+                },
+                {
+                    name: "Dominion OS 1.0 - Desktop PC",
+                    description: "Complete sovereign AI infrastructure for local desktop deployment",
+                    features: ["Local MCP deployment", "Docker integration", "Offline operation", "Security hardening"],
+                    pricing: { one_time: 499 },
+                    sku: "DOM-OS-DESKTOP-001"
+                },
+                {
+                    name: "Dominion Cloud Computer",
+                    description: "Cloud-based computing service with sovereign AI infrastructure",
+                    features: ["Cloud computing service", "Performance optimization", "Auto-scaling", "Enterprise support"],
+                    pricing: { hourly: 2.99 },
+                    sku: "DOM-CC-001"
+                }
+            ];
+            displayProducts(products);
+        }
+
+        function getProductIcon(name) {
+            if (name.includes('Google Cloud')) return '☁️';
+            if (name.includes('Desktop')) return '🖥️';
+            if (name.includes('Cloud Computer')) return '🖧';
+            return '🤖';
+        }
+
+        function getPricingDisplay(pricing) {
+            if (pricing.monthly) return pricing.monthly;
+            if (pricing.one_time) return pricing.one_time;
+            if (pricing.hourly) return pricing.hourly;
+            return 'Contact Us';
+        }
+
+        function getPricingPeriod(pricing) {
+            if (pricing.monthly) return 'per month';
+            if (pricing.one_time) return 'one-time purchase';
+            if (pricing.hourly) return 'per hour';
+            return '';
+        }
+
+        function purchaseProduct(sku) {
+            // Implement purchase flow
+            alert(`Initiating purchase for ${sku}. Integration with payment processor required.`);
+        }
+
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Dominion Cloud Computer",
+    "version": "1.0.0",
+    "sku": "DOM-CC-001",
+    "description": "Cloud-based computing service with sovereign AI infrastructure and maximum performance optimization",
+    "pricing": {
+      "hourly": 2.99,
+      "monthly": 199,
+      "currency": "USD"
+    },
+    "features": [
+      "Cloud computing service",
+      "Sovereign AI infrastructure",
+      "Performance optimization",
+      "Auto-scaling included",
+      "Global CDN integration",
+      "Enterprise support SLA"
+    ],
+    "deployment": {
+      "platform": "multi-cloud",
+      "infrastructure": "sovereign",
+      "monitoring": "enterprise"
+    },
+    "support": {
+      "level": "enterprise",
+      "response_time": "1_hour",
+      "uptime_sla": "99.99%"
+    },
+    "slug": "dominion-cloud-computer"
+  },
+  {
+    "name": "Dominion OS 1.0 - Desktop PC",
+    "version": "1.0.0",
+    "sku": "DOM-OS-DESKTOP-001",
+    "description": "Complete sovereign AI infrastructure for local desktop deployment with Docker Desktop Pro integration",
+    "pricing": {
+      "one_time": 499,
+      "currency": "USD"
+    },
+    "features": [
+      "Local MCP deployment",
+      "Docker Desktop Pro integration",
+      "Sovereign AI autonomy",
+      "Offline operation capability",
+      "Security hardening included",
+      "Community support"
+    ],
+    "deployment": {
+      "platform": "desktop",
+      "infrastructure": "sovereign",
+      "monitoring": "local"
+    },
+    "support": {
+      "level": "community",
+      "response_time": "24_hours",
+      "uptime_sla": "self_managed"
+    },
+    "slug": "dominion-os-1.0-desktop-pc"
+  },
+  {
+    "name": "Dominion OS 1.0 - Google Cloud",
+    "version": "1.0.0",
+    "sku": "DOM-OS-GCLOUD-001",
+    "description": "Complete sovereign AI infrastructure deployed on Google Cloud Platform with maximum security and autonomy",
+    "pricing": {
+      "monthly": 299,
+      "annual": 2999,
+      "currency": "USD"
+    },
+    "features": [
+      "Full MCP deployment automation",
+      "Sovereign AI infrastructure",
+      "Google Cloud integration",
+      "24/7 autonomous monitoring",
+      "Security hardening included",
+      "Commercial support SLA"
+    ],
+    "deployment": {
+      "platform": "gcp",
+      "infrastructure": "sovereign",
+      "monitoring": "autonomous"
+    },
+    "support": {
+      "level": "commercial",
+      "response_time": "4_hours",
+      "uptime_sla": "99.9%"
+    },
+    "slug": "dominion-os-1.0-gcloud"
+  }
+]

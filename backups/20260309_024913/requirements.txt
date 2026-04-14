@@ -1,0 +1,36 @@
+# Core Dependencies
+Flask>=3.1.3
+Flask-CORS>=6.0.0
+PyJWT>=2.8.0
+gunicorn>=22.0.0
+requests>=2.33.0
+
+# Google Cloud Platform
+google-cloud-core>=2.3.3
+google-cloud-storage>=2.10.0
+google-cloud-secret-manager>=2.16.4
+google-auth>=2.22.0
+google-api-python-client>=2.97.0
+
+# Docker & Containerization
+docker>=6.1.3
+
+# YAML Processing
+PyYAML>=6.0.1
+
+# Data Processing
+pandas>=2.0.3
+numpy>=1.24.3
+
+# CLI & Terminal Tools
+click>=8.1.6
+colorama>=0.4.6
+
+# Utilities
+python-dotenv>=1.0.0
+pathlib>=1.0.1
+
+# Dependency conflict resolution
+sympy>=1.13.1
+pydantic>=2.12.5
+pydantic-core>=2.41.5

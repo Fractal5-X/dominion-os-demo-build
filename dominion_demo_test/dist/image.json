@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "fs": {
+    "/etc/dominion.conf": "version=1.0.0",
+    "/boot/hello": "DominionOS bootable demo"
+  },
+  "metadata": {
+    "name": "dominion-os",
+    "kind": "toy-image"
+  }
+}

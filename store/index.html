@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominion OS Store | Fractal5 Solutions</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff'/%3E%3Cpath d='M18 18h28v8H26v12h18v8H26v8h-8z' fill='%23000000'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-2: #f5f5f5;
+            --panel: #f5f5f5;
+            --panel-strong: #ffffff;
+            --text: #000000;
+            --muted: #797979;
+            --line: #d9d9d9;
+            --soft: #f5f5f5;
+            --gold: #000000;
+            --mint: #797979;
+            --alert: #797979;
+            --shadow: 0 24px 60px #d9d9d9;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: "Manrope", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 12% 10%, #d9d9d9 0, transparent 24%),
+                radial-gradient(circle at 88% 2%, #f5f5f5 0, transparent 22%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(#d9d9d9 1px, transparent 1px),
+                linear-gradient(90deg, #d9d9d9 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(180deg, #000000 0%, transparent 92%);
+        }
+
+        a { color: inherit; }
+
+        code {
+            font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 20px 72px;
+        }
+
+        .hero,
+        .section {
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%),
+                var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            display: grid;
+            gap: 24px;
+            padding: clamp(26px, 5vw, 52px);
+            border-radius: 34px;
+        }
+
+        .section {
+            margin-top: 24px;
+            padding: 24px;
+            border-radius: 28px;
+        }
+
+        .eyebrow,
+        .badge {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #ffffff;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.74rem;
+        }
+
+        .eyebrow { background: #000000; color: #ffffff; border-color: #000000; }
+        .badge { color: var(--muted); }
+
+        .hero-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+            gap: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.9rem, 6.6vw, 6rem);
+            line-height: 0.92;
+            letter-spacing: -0.05em;
+            max-width: 10ch;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(1.45rem, 2.5vw, 2rem);
+            letter-spacing: -0.03em;
+        }
+
+        p {
+            margin: 0;
+            line-height: 1.65;
+            color: var(--muted);
+        }
+
+        .hero-copy {
+            max-width: 68ch;
+            font-size: 1.05rem;
+        }
+
+        .hero-actions,
+        .toolbar,
+        .card-actions,
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 18px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        .btn-primary {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text);
+            border-color: var(--line);
+        }
+
+        .hero-side {
+            display: grid;
+            gap: 14px;
+        }
+
+        .signal,
+        .summary-card,
+        .catalog-card {
+            padding: 18px;
+            border-radius: 22px;
+            background: var(--panel-strong);
+            border: 1px solid var(--line);
+        }
+
+        .signal strong,
+        .summary-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .signal .value,
+        .summary-value {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .section-copy {
+            margin-top: 8px;
+            max-width: 68ch;
+        }
+
+        .toolbar {
+            margin-top: 20px;
+            justify-content: space-between;
+        }
+
+        .search {
+            flex: 1 1 280px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 50px;
+            padding: 0 16px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        .search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .toggle {
+            display: inline-flex;
+            gap: 4px;
+            padding: 4px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        .toggle button {
+            min-height: 40px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .toggle button[aria-pressed="true"] {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .summary-grid,
+        .proof-grid,
+        .catalog-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .summary-grid {
+            margin-top: 20px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .catalog-grid {
+            margin-top: 18px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .proof-grid {
+            margin-top: 18px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .catalog-card {
+            display: grid;
+            gap: 14px;
+            min-height: 100%;
+            box-shadow: 0 14px 30px #d9d9d9;
+        }
+
+        .catalog-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .product-name {
+            margin: 0;
+            font-size: 1.15rem;
+            line-height: 1.2;
+        }
+
+        .sku {
+            color: var(--muted);
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .price-block {
+            display: grid;
+            gap: 4px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+        }
+
+        .price-label {
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .price-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #ffffff;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .features {
+            display: grid;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .features li {
+            display: flex;
+            gap: 10px;
+            align-items: start;
+            color: var(--muted);
+        }
+
+        .features li::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            margin-top: 7px;
+            border-radius: 50%;
+            background: var(--mint);
+            box-shadow: 0 0 0 4px #d9d9d9;
+            flex: 0 0 auto;
+        }
+
+        .meta-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .meta-card {
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: #f5f5f5;
+        }
+
+        .meta-card .label {
+            color: var(--muted);
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .meta-card .value {
+            margin-top: 4px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .empty-state {
+            margin-top: 18px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px dashed var(--line);
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 1080px) {
+            .hero-layout,
+            .summary-grid,
+            .proof-grid,
+            .catalog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            main {
+                padding-inline: 14px;
+            }
+
+            .hero,
+            .section {
+                border-radius: 22px;
+                padding: 20px;
+            }
+
+            h1 {
+                max-width: 100%;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main data-contract="store-shell" data-route="/store">
+        <section class="hero">
+            <div class="hero-layout">
+                <div>
+                    <span class="eyebrow">Dominion Commerce Surface</span>
+                    <h1>Enterprise modules, packaged with operational discipline.</h1>
+                    <p class="hero-copy">
+                        This storefront presents the checked-in Dominion catalog in a
+                        reviewable commercial format. It is designed for buyers, operators,
+                        and technical evaluators who need clarity on deployment model,
+                        support posture, and commercial entry point.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" href="#catalog">Review the catalog</a>
+                        <a class="btn btn-secondary" href="/demo">Open live demo</a>
+                        <a class="btn btn-secondary" href="/api/products">View product JSON</a>
+                    </div>
+                </div>
+
+                <div class="hero-side">
+                    <div class="signal">
+                        <strong>Commercial posture</strong>
+                        <div class="value">Product-led discovery, human-led onboarding, auditable deployment scope.</div>
+                    </div>
+                    <div class="signal">
+                        <strong>Buying model</strong>
+                        <div class="value">Direct contact and scoped rollout, not blind checkout.</div>
+                    </div>
+                    <div class="signal">
+                        <strong>Catalog source</strong>
+                        <div class="value"><code>/api/products</code> drives the live surface.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-grid" id="summary-grid">
+                <article class="summary-card">
+                    <span class="summary-label">Products</span>
+                    <span class="summary-value" id="summary-count">-</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Enterprise Support</span>
+                    <span class="summary-value" id="summary-enterprise">-</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Deployment Modes</span>
+                    <span class="summary-value" id="summary-platforms">-</span>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Price View</span>
+                    <span class="summary-value" id="summary-view">Monthly</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="catalog">
+            <div class="section-head">
+                <div>
+                    <h2>Catalog</h2>
+                    <p class="section-copy">
+                        Compare modules by pricing model, deployment shape, and support level.
+                        Search remains local and instant so the surface stays useful during live demos.
+                    </p>
+                </div>
+                <div class="section-actions">
+                    <span class="badge">API-backed</span>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <label class="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.47 6.47 0 0 0 1.57-4.23A6.5 6.5 0 1 0 9.5 15c1.61 0 3.09-.59 4.23-1.57l.27.27v.8l4.25 4.25 1.27-1.27L15.5 14Zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/>
+                    </svg>
+                    <input id="catalog-search" type="search" autocomplete="off" placeholder="Search by product, SKU, platform, or support level" aria-label="Search catalog">
+                </label>
+
+                <div class="toggle" role="group" aria-label="Price view">
+                    <button type="button" data-view="monthly" aria-pressed="true">Monthly</button>
+                    <button type="button" data-view="annual" aria-pressed="false">Annual</button>
+                    <button type="button" data-view="one_time" aria-pressed="false">One-Time</button>
+                    <button type="button" data-view="hourly" aria-pressed="false">Hourly</button>
+                </div>
+                <div id="live-region" class="visually-hidden" aria-live="polite"></div>
+            </div>
+
+            <div class="catalog-grid" id="catalog-grid"></div>
+            <div class="empty-state" id="empty-state" hidden>No products match the current search.</div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <h2>Purchase Path</h2>
+                    <p class="section-copy">
+                        This store should not imply instant checkout for enterprise infrastructure.
+                        The correct path is qualification, scope confirmation, and controlled onboarding.
+                    </p>
+                </div>
+            </div>
+
+            <div class="proof-grid">
+                <article class="summary-card">
+                    <span class="summary-label">Step 1</span>
+                    <span class="summary-value">Review the module</span>
+                    <p>Use the catalog and API data to confirm fit, operating model, and support posture.</p>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Step 2</span>
+                    <span class="summary-value">Open a commercial conversation</span>
+                    <p>Route buyers to contact and onboarding rather than a fake self-serve purchase button.</p>
+                </article>
+                <article class="summary-card">
+                    <span class="summary-label">Step 3</span>
+                    <span class="summary-value">Launch with controlled rollout</span>
+                    <p>Align deployment scope, security, support, and proof surfaces before production entry.</p>
+                </article>
+            </div>
+        </section>
+
+        <div class="footer">
+            Dominion OS Store · API-backed catalog · aligned to the live demo surface
+        </div>
+    </main>
+
+    <script>
+        const catalogGrid = document.getElementById("catalog-grid");
+        const emptyState = document.getElementById("empty-state");
+        const searchInput = document.getElementById("catalog-search");
+        const toggleButtons = Array.from(document.querySelectorAll(".toggle button"));
+        const liveRegion = document.getElementById("live-region");
+
+        const summaryCount = document.getElementById("summary-count");
+        const summaryEnterprise = document.getElementById("summary-enterprise");
+        const summaryPlatforms = document.getElementById("summary-platforms");
+        const summaryView = document.getElementById("summary-view");
+
+        let products = [];
+        let priceView = "monthly";
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function titleize(value) {
+            return String(value || "n/a")
+                .replace(/_/g, " ")
+                .replace(/\bgcp\b/gi, "GCP")
+                .replace(/\bsla\b/gi, "SLA")
+                .replace(/\b\w/g, (match) => match.toUpperCase());
+        }
+
+        function formatCurrency(amount, currency = "USD") {
+            if (amount == null || Number.isNaN(Number(amount))) return "Contact";
+            return new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency
+            }).format(Number(amount));
+        }
+
+        function preferredPrice(pricing, view) {
+            if (pricing && pricing[view] != null) return view;
+            return ["monthly", "annual", "one_time", "hourly"].find((key) => pricing && pricing[key] != null) || null;
+        }
+
+        function priceLabel(view) {
+            if (view === "monthly") return "Monthly";
+            if (view === "annual") return "Annual";
+            if (view === "one_time") return "One-time";
+            if (view === "hourly") return "Hourly";
+            return "Pricing";
+        }
+
+        function pricePeriod(view) {
+            if (view === "monthly") return "per month";
+            if (view === "annual") return "per year";
+            if (view === "one_time") return "one-time";
+            if (view === "hourly") return "per hour";
+            return "";
+        }
+
+        function productIcon(product) {
+            const platform = product?.deployment?.platform || "";
+            if (platform === "gcp") return "Cloud Run / GCP";
+            if (platform === "desktop") return "Desktop / Local";
+            if (platform === "multi-cloud") return "Multi-cloud";
+            return "Sovereign Stack";
+        }
+
+        function productMatches(product, query) {
+            if (!query) return true;
+            const haystack = [
+                product.name,
+                product.sku,
+                product.description,
+                ...(product.features || []),
+                product?.deployment?.platform,
+                product?.support?.level
+            ].join(" ").toLowerCase();
+
+            return haystack.includes(query.toLowerCase());
+        }
+
+        function setSummary(items) {
+            const enterpriseCount = items.filter((item) => item?.support?.level === "enterprise").length;
+            const platforms = [...new Set(items.map((item) => titleize(item?.deployment?.platform || "unknown")))];
+
+            summaryCount.textContent = String(items.length);
+            summaryEnterprise.textContent = enterpriseCount ? String(enterpriseCount) : "None";
+            summaryPlatforms.textContent = platforms.join(" / ");
+            summaryView.textContent = priceLabel(priceView);
+        }
+
+        function cardMarkup(product) {
+            const pricing = product.pricing || {};
+            const activeView = preferredPrice(pricing, priceView);
+            const currency = pricing.currency || "USD";
+            const activePrice = activeView ? formatCurrency(pricing[activeView], currency) : "Contact";
+            const support = titleize(product?.support?.level || "standard");
+            const responseTime = titleize(product?.support?.response_time || "n/a");
+            const uptime = titleize(product?.support?.uptime_sla || "n/a");
+            const platform = titleize(product?.deployment?.platform || "unknown");
+            const monitoring = titleize(product?.deployment?.monitoring || "n/a");
+
+            return `
+                <article class="catalog-card">
+                    <div class="catalog-top">
+                        <div>
+                            <div class="sku">${escapeHtml(product.sku || "NO-SKU")}</div>
+                            <h3 class="product-name">${escapeHtml(product.name || "Unnamed Product")}</h3>
+                        </div>
+                        <div class="pill">${escapeHtml(productIcon(product))}</div>
+                    </div>
+
+                    <p>${escapeHtml(product.description || "No description available.")}</p>
+
+                    <div class="price-block">
+                        <span class="price-label">${escapeHtml(priceLabel(activeView || priceView))}</span>
+                        <span class="price-value">${escapeHtml(activePrice)}</span>
+                        <span class="muted">${escapeHtml(activeView ? pricePeriod(activeView) : "commercial scope required")}</span>
+                    </div>
+
+                    <div class="pill-row">
+                        <span class="pill">${escapeHtml(platform)}</span>
+                        <span class="pill">${escapeHtml(support)} support</span>
+                        <span class="pill">${escapeHtml(monitoring)} monitoring</span>
+                    </div>
+
+                    <ul class="features">
+                        ${(product.features || []).slice(0, 5).map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}
+                    </ul>
+
+                    <div class="meta-grid">
+                        <div class="meta-card">
+                            <div class="label">Response Time</div>
+                            <div class="value">${escapeHtml(responseTime)}</div>
+                        </div>
+                        <div class="meta-card">
+                            <div class="label">Uptime SLA</div>
+                            <div class="value">${escapeHtml(uptime)}</div>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <a class="btn btn-primary" href="/demo">Open Demo</a>
+                        <a class="btn btn-secondary" href="/api/products/${encodeURIComponent(product.slug || "")}">View Spec</a>
+                        <a class="btn btn-secondary" href="mailto:contact@fractal5solutions.com?subject=${encodeURIComponent(`Dominion Store Inquiry: ${product.sku || product.name || "Product"}`)}">Start Onboarding</a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderCatalog() {
+            const query = searchInput.value.trim();
+            const visible = products.filter((product) => productMatches(product, query));
+
+            catalogGrid.innerHTML = visible.map(cardMarkup).join("");
+            emptyState.hidden = visible.length !== 0;
+            liveRegion.textContent = `${visible.length} products shown.`;
+            setSummary(products);
+        }
+
+        function normalizeProduct(product) {
+            return {
+                ...product,
+                slug: product.slug || slugFromName(product.name || "")
+            };
+        }
+
+        function slugFromName(name) {
+            return String(name || "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        function setPriceView(next) {
+            priceView = next;
+            toggleButtons.forEach((button) => {
+                button.setAttribute("aria-pressed", String(button.dataset.view === next));
+            });
+            renderCatalog();
+        }
+
+        async function loadProducts() {
+            const response = await fetch("/api/products");
+            if (!response.ok) {
+                throw new Error(`Catalog request failed with ${response.status}`);
+            }
+
+            const payload = await response.json();
+            products = (Array.isArray(payload) ? payload : []).map(normalizeProduct);
+            renderCatalog();
+        }
+
+        searchInput.addEventListener("input", renderCatalog);
+        toggleButtons.forEach((button) => {
+            button.addEventListener("click", () => setPriceView(button.dataset.view));
+        });
+
+        loadProducts().catch((error) => {
+            catalogGrid.innerHTML = `
+                <article class="catalog-card">
+                    <h3 class="product-name">Catalog unavailable</h3>
+                    <p>${escapeHtml(error.message)}</p>
+                    <div class="card-actions">
+                        <a class="btn btn-secondary" href="/api/products">Open raw product API</a>
+                        <a class="btn btn-secondary" href="/demo">Return to demo</a>
+                    </div>
+                </article>
+            `;
+            emptyState.hidden = true;
+            summaryCount.textContent = "0";
+            summaryEnterprise.textContent = "0";
+            summaryPlatforms.textContent = "Unavailable";
+            summaryView.textContent = priceLabel(priceView);
+        });
+    </script>
+</body>
+</html>

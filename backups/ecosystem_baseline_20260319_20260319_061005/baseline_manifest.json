@@ -1,0 +1,12 @@
+{
+  "created_at_utc": "2026-03-19T13:10:05Z",
+  "snapshot_date": "2026-03-19",
+  "source_root": "D:\\phi-ops\\github\\dominion-demo-build",
+  "artifacts": [
+    "data/gmail_contacts/contacts.json",
+    "data/unified_relationships.json",
+    "reports/relationship_analysis.json",
+    "telemetry/erica_final_status_20260319_060119.json"
+  ],
+  "backup_dir": "D:\\phi-ops\\github\\dominion-demo-build\\backups\\ecosystem_baseline_20260319_20260319_061005"
+}

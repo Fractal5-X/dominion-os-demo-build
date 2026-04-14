@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-04-06T18:29:41+00:00",
+  "live_ops_score": "100.00",
+  "services": {
+    "web": {
+      "healthy": 8,
+      "total": 8,
+      "status": "PERFECT"
+    },
+    "background": {
+      "healthy": 3,
+      "total": 3,
+      "status": "PERFECT"
+    }
+  },
+  "system_resources": {"cpu": {"usage": 1.8, "status": "HEALTHY"}, "memory": {"usage": 4.67, "status": "HEALTHY"}, "disk": {"usage": 49, "status": "HEALTHY"}},
+  "sovereign_mode": "MAXIMUM_ACTIVE",
+  "authority_level": "13/13"
+}

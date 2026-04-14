@@ -1,0 +1,77 @@
+{
+  // Python runtime + testing
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["."],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.indexing": false,
+  "python.analysis.autoSearchPaths": false,
+  "python.languageServer": "Pylance",
+
+  // Editor performance
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.wordWrap": "on",
+  "editor.rulers": [80, 120],
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": false,
+  "editor.guides.bracketPairs": "active",
+
+  // File and watcher optimization
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.maxMemoryForLargeFilesMB": 4096,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.coverage": true,
+    "**/logs/**": true,
+    "**/*.db": true
+  },
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/logs/**": true,
+    "**/data/*.db": true
+  },
+  "files.watcherExclude": {
+    "**/__pycache__/**": true,
+    "**/.venv/**": true,
+    "**/node_modules/**": true,
+    "**/logs/**": true,
+    "**/dist/**": true,
+    "**/exports/**": true,
+    "**/telemetry/*.log": true
+  },
+
+  // Terminal performance
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.enablePersistentSessions": false,
+
+  // Git responsiveness in large repos
+  "git.autofetch": false,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.untrackedChanges": "hidden",
+  "git.openRepositoryInParentFolders": "never",
+
+  // Workbench startup performance
+  "workbench.startupEditor": "none",
+  "window.restoreWindows": "none",
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false
+}

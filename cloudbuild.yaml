@@ -1,0 +1,10 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        echo "[PUBLIC REPO HANDOFF]"
+        echo "Cloud Run deployment is controlled from dominion-command-center."
+        echo "Use the private repo workflow: .github/workflows/gcp-cloudrun-deploy.yml"
+        exit 1

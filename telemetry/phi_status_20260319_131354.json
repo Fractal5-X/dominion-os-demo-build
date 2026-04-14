@@ -1,0 +1,123 @@
+{
+  "timestamp_utc": "2026-03-19T13:13:55Z",
+  "overall": "degraded",
+  "repo": {
+    "remote": "https://github.com/Fractal5-Solutions/dominion-command-center.git",
+    "branch": "codex/liveops-hardening-20260317",
+    "dirty_count": 17,
+    "canonical_root": "D:\\phi-ops\\github\\dominion-command-center",
+    "branch_status": "## codex/liveops-hardening-20260317...origin/codex/liveops-hardening-20260317\n M phi_monitoring_dashboard.py\n?? RUNBOOK_DISASTER_RECOVERY.md\n?? RUNBOOK_INCIDENT_RESPONSE.md\n?? RUNBOOK_SCALING_OPERATIONS.md\n?? config/situation_room_overlay_canada.json\n?? docs/SITUATION_WAR_ROOM_DASHBOARD_PLAN.md\n?? phi_slo_monitoring.sh\n?? phi_sovereign_keepalive.sh\n?? phi_sovereign_status.sh",
+    "last_commit": {
+      "subject": "Add product-line alignment receipt for first five repos",
+      "authored_at": "2026-03-17T14:46:20-07:00",
+      "sha": "13312097fcc8c0292e4e946799cd83d75eeb52bd"
+    }
+  },
+  "scripts": {
+    "sovereign_master_orchestrator_sh": true,
+    "phi_sovereign_status_sh": true,
+    "phi_sovereign_status_ps1": true,
+    "phi_sovereign_keepalive_sh": true
+  },
+  "telemetry": {
+    "directory_exists": true,
+    "current_status_file": "D:\\phi-ops\\github\\dominion-command-center\\telemetry\\phi_status_current.json",
+    "current_status_write_utc": "2026-03-19T13:13:55Z"
+  },
+  "runtime": {
+    "dominion_web": {
+      "detail": "200",
+      "ok": true,
+      "url": "http://127.0.0.1:8080/api/health"
+    },
+    "alerts_listener": {
+      "detail": "200",
+      "ok": true,
+      "url": "http://127.0.0.1:9009/health"
+    },
+    "llm_gateway_health": {
+      "detail": "200",
+      "ok": true,
+      "url": "http://127.0.0.1:8082/health"
+    },
+    "liveops_mcp_initialize": {
+      "detail": "200",
+      "ok": true,
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  },
+  "required_repos": {
+    "all_ok": false,
+    "repos": [
+      {
+        "name": "dominion-command-center",
+        "path": "D:\\phi-ops\\github\\dominion-command-center",
+        "exists": true,
+        "git_repo": true,
+        "expected_origin": "https://github.com/Fractal5-Solutions/dominion-command-center.git",
+        "origin": "https://github.com/Fractal5-Solutions/dominion-command-center.git",
+        "origin_match": true,
+        "branch": "codex/liveops-hardening-20260317",
+        "branch_status": "## codex/liveops-hardening-20260317...origin/codex/liveops-hardening-20260317\n M phi_monitoring_dashboard.py\n?? RUNBOOK_DISASTER_RECOVERY.md\n?? RUNBOOK_INCIDENT_RESPONSE.md\n?? RUNBOOK_SCALING_OPERATIONS.md\n?? config/situation_room_overlay_canada.json\n?? docs/SITUATION_WAR_ROOM_DASHBOARD_PLAN.md\n?? phi_slo_monitoring.sh\n?? phi_sovereign_keepalive.sh\n?? phi_sovereign_status.sh",
+        "dirty_count": 17,
+        "ahead_count": 0,
+        "behind_count": 0,
+        "ok": false,
+        "issues": [
+          "dirty_worktree:17"
+        ]
+      },
+      {
+        "name": "dominion-demo-build",
+        "path": "D:\\phi-ops\\github\\dominion-demo-build",
+        "exists": true,
+        "git_repo": true,
+        "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-demo-build.git",
+        "origin": "https://github.com/Fractal5-Solutions/dominion-os-demo-build.git",
+        "origin_match": true,
+        "branch": "codex/confirm-sweep-20260317-demo-build",
+        "branch_status": "## codex/confirm-sweep-20260317-demo-build...origin/codex/confirm-sweep-20260317-demo-build\n M .github/workflows/production-deploy.yml\n M command_core.py\n M data/apollo_crm/crm_accounts.csv\n M data/apollo_crm/crm_accounts.json\n M data/dropbox_drive/files.json\n M data/gmail_contacts/contacts.json\n M data/google_drive/documents.json\n M data/unified_relationships.json\n M reports/relationship_analysis.json",
+        "dirty_count": 25,
+        "ahead_count": 0,
+        "behind_count": 0,
+        "ok": false,
+        "issues": [
+          "dirty_worktree:25"
+        ]
+      },
+      {
+        "name": "dominion-os-1.0-desktop-pc",
+        "path": "D:\\phi-ops\\github\\dominion-os-1.0-desktop-pc",
+        "exists": true,
+        "git_repo": true,
+        "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-desktop-pc.git",
+        "origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-desktop-pc.git",
+        "origin_match": true,
+        "branch": "codex/optimize-receipts-20260317-desktop",
+        "branch_status": "## codex/optimize-receipts-20260317-desktop...origin/codex/optimize-receipts-20260317-desktop",
+        "dirty_count": 0,
+        "ahead_count": 0,
+        "behind_count": 0,
+        "ok": true,
+        "issues": []
+      },
+      {
+        "name": "dominion-os-1.0-gcloud",
+        "path": "D:\\phi-ops\\github\\dominion-os-1.0-gcloud",
+        "exists": true,
+        "git_repo": true,
+        "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-gcloud.git",
+        "origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-gcloud.git",
+        "origin_match": true,
+        "branch": "codex/optimize-receipts-20260317-gcloud",
+        "branch_status": "## codex/optimize-receipts-20260317-gcloud...origin/codex/optimize-receipts-20260317-gcloud",
+        "dirty_count": 0,
+        "ahead_count": 0,
+        "behind_count": 0,
+        "ok": true,
+        "issues": []
+      }
+    ],
+    "enforced": true
+  }
+}

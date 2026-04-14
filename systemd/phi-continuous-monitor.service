@@ -1,0 +1,15 @@
+[Unit]
+Description=PHI Continuous Monitor Service (example)
+After=network.target
+
+[Service]
+Type=simple
+User=${USER}
+ExecStart=/bin/bash /workspaces/dominion-os-demo-build/scripts/telemetry/continuous_monitor.sh
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

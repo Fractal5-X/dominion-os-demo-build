@@ -1,0 +1,29 @@
+{
+  "name": "Dominion Cloud Computer",
+  "version": "1.0.0",
+  "sku": "DOM-CC-001",
+  "description": "Cloud-based computing service with sovereign AI infrastructure and maximum performance optimization",
+  "pricing": {
+    "hourly": 2.99,
+    "monthly": 199,
+    "currency": "USD"
+  },
+  "features": [
+    "Cloud computing service",
+    "Sovereign AI infrastructure",
+    "Performance optimization",
+    "Auto-scaling included",
+    "Global CDN integration",
+    "Enterprise support SLA"
+  ],
+  "deployment": {
+    "platform": "multi-cloud",
+    "infrastructure": "sovereign",
+    "monitoring": "enterprise"
+  },
+  "support": {
+    "level": "enterprise",
+    "response_time": "1_hour",
+    "uptime_sla": "99.99%"
+  }
+}

@@ -1,0 +1,79 @@
+groups:
+  - name: dominion_alerts
+    interval: 30s
+    rules:
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "High error rate detected"
+          description: "Service {{ $labels.job }} has error rate > 5% for 5 minutes"
+
+      # Service Down Alert
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "Service is down"
+          description: "Service {{ $labels.job }} has been down for 2 minutes"
+
+      # High Response Time
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time > 2s for service {{ $labels.job }}"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024) > 3500
+        for: 10m
+        labels:
+          severity: warning
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "High memory usage detected"
+          description: "Service {{ $labels.job }} using > 3.5GB RAM for 10 minutes"
+
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 1.8
+        for: 10m
+        labels:
+          severity: warning
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "High CPU usage detected"
+          description: "Service {{ $labels.job }} using > 90% CPU for 10 minutes"
+
+      # Low Instance Count
+      - alert: LowInstanceCount
+        expr: count(up{job=~"dominion-.*"}) < 3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low instance count"
+          description: "Less than 3 Dominion service instances running"
+
+      # Request Rate Anomaly
+      - alert: RequestRateAnomaly
+        expr: abs(rate(http_requests_total[5m]) - rate(http_requests_total[5m] offset 1h)) > 100
+        for: 10m
+        labels:
+          severity: info
+          service: '{{ $labels.job }}'
+        annotations:
+          summary: "Request rate anomaly detected"
+          description: "Significant change in request rate for service {{ $labels.job }}"

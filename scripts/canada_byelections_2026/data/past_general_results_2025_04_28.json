@@ -1,0 +1,67 @@
+{
+  "election_date_local": "2025-04-28",
+  "source": "Elections Canada Voter Information Service (past official results)",
+  "ridings": {
+    "Scarborough Southwest": {
+      "source_url": "https://www.elections.ca/scripts/vis/PastResults?ED=35096&EV=64&EV_TYPE=3&L=e&PAGEID=28&PD=1240153&QID=-1",
+      "valid_votes": 54476,
+      "votes_by_party": {
+        "Liberal": 33495,
+        "Conservative": 16652,
+        "NDP": 2730,
+        "Green": 754,
+        "PPC": 567,
+        "Other": 278
+      },
+      "vote_pct_by_party": {
+        "Liberal": 61.5,
+        "Conservative": 30.6,
+        "NDP": 5.0,
+        "Green": 1.4,
+        "PPC": 1.0,
+        "Other": 0.5
+      }
+    },
+    "Terrebonne": {
+      "source_url": "https://www.elections.ca/scripts/vis/PastResults?ED=24073&EV=64&EV_TYPE=3&L=e&PAGEID=28&QID=-1",
+      "valid_votes": 60278,
+      "votes_by_party": {
+        "Liberal": 23352,
+        "Bloc Quebecois": 23351,
+        "Conservative": 10961,
+        "NDP": 1556,
+        "Green": 630,
+        "PPC": 428,
+        "Other": 0
+      },
+      "vote_pct_by_party": {
+        "Liberal": 38.7,
+        "Bloc Quebecois": 38.7,
+        "Conservative": 18.2,
+        "NDP": 2.6,
+        "Green": 1.0,
+        "PPC": 0.7,
+        "Other": 0.0
+      }
+    },
+    "University-Rosedale": {
+      "source_url": "https://www.elections.ca/Scripts/vis/PastResults?ED=35112&EV=99&EV_TYPE=6&L=e&MAPID=&PAGEID=28&PC=&PD=&PROV=on&PROVID=35&QID=11&STAT_CODE_ID=-1&TPAGEID=",
+      "valid_votes": 62265,
+      "votes_by_party": {
+        "Liberal": 39847,
+        "Conservative": 14624,
+        "NDP": 6168,
+        "Green": 1066,
+        "Other": 560
+      },
+      "vote_pct_by_party": {
+        "Liberal": 64.0,
+        "Conservative": 23.5,
+        "NDP": 9.9,
+        "Green": 1.7,
+        "PPC": 0.0,
+        "Other": 0.9
+      }
+    }
+  }
+}

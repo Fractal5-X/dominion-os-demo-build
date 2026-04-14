@@ -1,0 +1,22 @@
+{
+  "at2_machine_baseline": {
+    "cpu_cores": 16,
+    "memory_gb": 62,
+    "gpu_memory_mb": 49152,
+    "network_latency_ms": 0.8,
+    "ai_inference_baseline_ms": 45
+  },
+  "anomaly_detection": {
+    "cpu_threshold_percent": 95,
+    "memory_threshold_percent": 90,
+    "gpu_threshold_percent": 95,
+    "latency_threshold_ms": 100,
+    "auto_recovery_enabled": true
+  },
+  "sovereign_protection": {
+    "performance_lockdown": true,
+    "anomaly_alerts": true,
+    "auto_optimization": true,
+    "maximum_power_mode": "AT2_9/9"
+  }
+}

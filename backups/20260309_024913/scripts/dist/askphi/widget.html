@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHI Chief AI - AskPhi Widget</title>
+    <style>body{font-family:Segoe UI,Tahoma,sans-serif;background:linear-gradient(135deg,#000000 0%,#797979 100%);margin:0;padding:20px;min-height:100vh;display:flex;align-items:center;justify-content:center}.widget-container{background:white;border-radius:12px;padding:30px;box-shadow:0 20px 40px rgba(0,0,0,.1);max-width:500px;width:100%}.header{text-align:center;margin-bottom:30px}.phi-logo{font-size:2.5em;color:#000000;margin-bottom:10px}.subtitle{color:#666;font-size:1.1em}.auth-section{text-align:center}.github-btn{background:#24292e;color:white;border:none;padding:12px 24px;border-radius:6px;font-size:16px;cursor:pointer;text-decoration:none;display:inline-block;margin:10px 0;transition:background .3s}.github-btn:hover{background:#1a1e22}.status{margin-top:20px;padding:10px;border-radius:6px;font-size:14px;display:none}.status.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}.status.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}</style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="header">
+            <div class="phi-logo">Φ</div>
+            <h1>PHI Chief AI</h1>
+            <p class="subtitle">AskPhi - Sovereign AI Assistant</p>
+        </div>
+        <div class="auth-section">
+            <p>Connect with GitHub to access PHI Chief AI capabilities:</p>
+            <a href="#" onclick="initiateAuth()" class="github-btn">🔐 Authenticate with GitHub</a>
+            <div id="status" class="status"></div>
+        </div>
+    </div>
+    <script>const OAUTH_SERVER_URL="https://your-oauth-server.com";function initiateAuth(){window.location.href=OAUTH_SERVER_URL+"/auth/github"}const urlParams=new URLSearchParams(window.location.search),token=urlParams.get("token"),error=urlParams.get("error");if(token){localStorage.setItem("phi_token",token);showStatus("Authentication successful! Redirecting...","success");setTimeout(()=>{window.location.href="/chat"},2e3)}else if(error){showStatus("Authentication failed: "+error,"error")}function showStatus(e,t){const s=document.getElementById("status");s.textContent=e,s.className="status "+t,s.style.display="block"}</script>
+</body>
+</html>

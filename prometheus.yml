@@ -1,0 +1,98 @@
+# Prometheus Configuration for MCP Servers Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'mcp-servers'
+    environment: 'production'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']
+
+# Rule files (optional)
+# rule_files:
+#   - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Docker daemon metrics
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'container_.*'
+        action: keep
+
+  # MCP Atlassian Server
+  - job_name: 'mcp-atlassian'
+    static_configs:
+      - targets: ['mcp-atlassian:3000']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP GitHub Server
+  - job_name: 'mcp-github'
+    static_configs:
+      - targets: ['mcp-github:3003']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP Stripe Server
+  - job_name: 'mcp-stripe'
+    static_configs:
+      - targets: ['mcp-stripe:3002']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP Playwright Server
+  - job_name: 'mcp-playwright'
+    static_configs:
+      - targets: ['mcp-playwright:3004']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP Chrome Browser Server
+  - job_name: 'mcp-chrome'
+    static_configs:
+      - targets: ['mcp-chrome:3000']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP Pylance Server
+  - job_name: 'mcp-pylance'
+    static_configs:
+      - targets: ['mcp-pylance:3007']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # MCP Figma Server
+  - job_name: 'mcp-figma'
+    static_configs:
+      - targets: ['mcp-figma:3001']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Dominion Java Live Ops Site
+  - job_name: 'dominion-java-live-ops-site'
+    static_configs:
+      - targets: ['host.docker.internal:8090']
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+  # cAdvisor for container metrics (if available)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'container_.*'
+        action: keep

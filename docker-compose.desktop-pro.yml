@@ -1,0 +1,286 @@
+# ============================================================================
+# DOMINION OS - DOCKER DESKTOP PRO OPTIMIZED CONFIGURATION
+# ============================================================================
+# Optimized for at2 workstation with AMD Ryzen 5 7600X + NVIDIA RTX 4070
+# Docker Desktop Pro: Resource limits, GPU acceleration, optimal networking
+# PHI Sovereign Authority Level: 13/13
+# ============================================================================
+
+version: '3.8'
+
+x-common-config: &common-config
+  restart: unless-stopped
+  networks:
+    - dominion-network
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-resource-limits: &resource-limits
+  deploy:
+    resources:
+      limits:
+        cpus: '2.0'
+        memory: 2G
+      reservations:
+        cpus: '0.5'
+        memory: 512M
+
+services:
+  # =========================================================================
+  # PHI SOVEREIGN SERVICES - Maximum Authority Mode
+  # =========================================================================
+
+  phi-sovereign-core:
+    <<: *common-config
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+      target: production
+    container_name: phi-sovereign-core
+    ports:
+      - "5000:5000"
+    environment:
+      - PHI_MODE=SOVEREIGN_MAX
+      - AUTHORITY_LEVEL=9
+      - SOVEREIGNTY_LEVEL=13/13
+      - PROJECT_ID=dominion-core-prod
+      - SERVICE_NAME=dominion-os-demo
+      - PORT=5000
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+      - CPU_CORES=6
+      - GPU_ENABLED=true
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - phi-data:/app/data
+      - phi-logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # OAuth Server - Sovereign Authentication
+  phi-oauth-server:
+    <<: [*common-config, *resource-limits]
+    build:
+      context: ./oauth_server
+      dockerfile: Dockerfile
+    container_name: phi-oauth-server
+    ports:
+      - "8080:8080"
+    environment:
+      - PHI_MODE=SOVEREIGN_AUTH
+      - AUTHORITY_LEVEL=9
+      - SOVEREIGNTY_LEVEL=13/13
+    volumes:
+      - ./oauth_server:/app:ro
+      - oauth-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # AskPHI Widget - Sovereign Interface
+  phi-askphi-widget:
+    <<: [*common-config, *resource-limits]
+    build:
+      context: ./widget_service
+      dockerfile: Dockerfile
+    container_name: phi-askphi-widget
+    ports:
+      - "8081:8080"
+    environment:
+      - PHI_MODE=WIDGET_SOVEREIGN
+      - AUTHORITY_LEVEL=9
+      - SOVEREIGNTY_LEVEL=13/13
+    volumes:
+      - ./widget_service:/app:ro
+      - widget-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # =========================================================================
+  # DATABASE SERVICES - Optimized for Desktop Pro
+  # =========================================================================
+
+  phi-database:
+    <<: *common-config
+    image: postgres:15-alpine
+    container_name: phi-database
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: phi_dominion
+      POSTGRES_USER: phi_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sovereign_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - phi-db-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phi_admin -d phi_dominion"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache - High Performance
+  phi-redis:
+    <<: *common-config
+    image: redis:7-alpine
+    container_name: phi-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - phi-redis-data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # =========================================================================
+  # MONITORING & OBSERVABILITY - Desktop Pro Optimized
+  # =========================================================================
+
+  prometheus:
+    <<: *common-config
+    image: prom/prometheus:latest
+    container_name: phi-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  grafana:
+    <<: *common-config
+    image: grafana/grafana:latest
+    container_name: phi-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-sovereign_admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana/provisioning:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    depends_on:
+      - prometheus
+
+# ============================================================================
+# VOLUMES - Persistent Data Storage
+# ============================================================================
+
+volumes:
+  phi-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data
+
+  phi-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/logs
+
+  phi-db-data:
+    driver: local
+
+  phi-redis-data:
+    driver: local
+
+  oauth-data:
+    driver: local
+
+  widget-data:
+    driver: local
+
+  prometheus-data:
+    driver: local
+
+  grafana-data:
+    driver: local
+
+# ============================================================================
+# NETWORKS - Optimized Bridge Network
+# ============================================================================
+
+networks:
+  dominion-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+      com.docker.network.bridge.name: phi-bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
+
+# ============================================================================
+# END OF CONFIGURATION
+# Sovereign Authority: 13/13 | Optimal Performance: Guaranteed
+# AMD Ryzen 5 7600X (6 cores) + NVIDIA RTX 4070 (CUDA enabled)
+# ============================================================================

@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-03-18T23:20:42Z",
+  "phi_score": 100,
+  "mcp_score": 0,
+  "mcp_score_applicable": true,
+  "total_score": 100,
+  "total_possible": 200,
+  "status": "POOR",
+  "threshold": 85,
+  "alert_triggered": true
+}

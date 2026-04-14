@@ -1,0 +1,47 @@
+{
+  "name": "Apollo CRM & BIMS Monitoring",
+  "description": "Monitor Apollo data integration and CRM/BIMS performance",
+  "metrics": [
+    {
+      "name": "apollo_api_calls",
+      "type": "counter",
+      "description": "Number of Apollo API calls made"
+    },
+    {
+      "name": "crm_accounts_synced",
+      "type": "gauge",
+      "description": "Number of CRM accounts synced from Apollo"
+    },
+    {
+      "name": "bims_query_performance",
+      "type": "histogram",
+      "description": "BIMS query response times",
+      "buckets": [0.1, 0.5, 1.0, 2.0, 5.0]
+    },
+    {
+      "name": "data_pipeline_success",
+      "type": "counter",
+      "description": "Successful data pipeline runs"
+    }
+  ],
+  "alerts": [
+    {
+      "name": "Apollo API Rate Limit",
+      "condition": "rate(apollo_api_calls[5m]) > 100",
+      "severity": "warning",
+      "description": "Apollo API rate limit approaching"
+    },
+    {
+      "name": "CRM Sync Failure",
+      "condition": "rate(data_pipeline_success[1h]) < 1",
+      "severity": "error",
+      "description": "CRM data sync has failed"
+    },
+    {
+      "name": "BIMS Query Slow",
+      "condition": "histogram_quantile(0.95, bims_query_performance) > 2.0",
+      "severity": "warning",
+      "description": "BIMS queries are running slow"
+    }
+  ]
+}

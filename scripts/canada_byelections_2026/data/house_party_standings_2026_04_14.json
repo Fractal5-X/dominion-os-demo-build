@@ -1,0 +1,34 @@
+{
+  "as_of": "2026-04-14",
+  "source": "House of Commons party standings page",
+  "source_url": "https://www.ourcommons.ca/members/en/party-standings",
+  "totals_by_party": {
+    "Liberal": 173,
+    "Conservative": 140,
+    "Bloc Quebecois": 22,
+    "NDP": 6,
+    "Green": 1,
+    "Vacant": 0
+  },
+  "conservative_seats_by_province_or_territory": {
+    "Alberta": 33,
+    "British Columbia": 19,
+    "Manitoba": 7,
+    "New Brunswick": 4,
+    "Newfoundland and Labrador": 3,
+    "Northwest Territories": 0,
+    "Nova Scotia": 0,
+    "Nunavut": 0,
+    "Ontario": 50,
+    "Prince Edward Island": 0,
+    "Quebec": 11,
+    "Saskatchewan": 13,
+    "Yukon": 0
+  },
+  "system_counts": {
+    "observed_members_sum": 342,
+    "house_size_reference": 343,
+    "majority_threshold": 172,
+    "note": "Observed sum from extracted table rows is 342; verify one-seat discrepancy against House CSV/XML export when available."
+  }
+}

@@ -1,0 +1,64 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'dominion-production'
+    environment: 'prod'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alert_rules.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Dominion Gateway
+  - job_name: 'dominion-gateway'
+    static_configs:
+      - targets: ['dominion-gateway:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Dominion API
+  - job_name: 'dominion-api'
+    static_configs:
+      - targets: ['dominion-api:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Demo Service
+  - job_name: 'dominion-demo-service'
+    static_configs:
+      - targets: ['dominion-demo-service:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # OAuth Server
+  - job_name: 'phi-oauth-server'
+    static_configs:
+      - targets: ['phi-oauth-server:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Java Live Ops Site
+  - job_name: 'dominion-java-live-ops-site'
+    static_configs:
+      - targets: ['dominion-java-live-ops-site:8090']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Google Cloud Monitoring (if exporter is configured)
+  - job_name: 'gcp-monitoring'
+    static_configs:
+      - targets: ['gcp-exporter:9090']
+    scrape_interval: 60s

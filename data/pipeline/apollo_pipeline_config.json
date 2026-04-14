@@ -1,0 +1,63 @@
+{
+  "name": "Apollo CRM & BIMS Data Pipeline",
+  "description": "Automated pipeline for syncing Apollo account data to Dominion OS CRM and BIMS",
+  "schedule": "0 */6 * * *",
+  "steps": [
+    {
+      "name": "fetch_apollo_data",
+      "type": "api_call",
+      "endpoint": "https://api.apollo.io/v1/organizations/search",
+      "method": "POST",
+      "headers": {
+        "X-API-Key": "${APOLLO_API_KEY}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "q_keywords": "technology software ai",
+        "page": 1,
+        "per_page": 1000,
+        "sort_by_field": "account_score",
+        "sort_ascending": false
+      },
+      "output": "data/apollo_crm/accounts_raw.json"
+    },
+    {
+      "name": "process_crm_data",
+      "type": "python_script",
+      "script": "scripts/process_apollo_crm.py",
+      "input": "data/apollo_crm/accounts_raw.json",
+      "output": "data/apollo_crm/crm_accounts.json"
+    },
+    {
+      "name": "load_to_bigquery",
+      "type": "bigquery_load",
+      "project": "dominion-os-1-0-main",
+      "dataset": "dominion_bims",
+      "table": "crm_accounts",
+      "source": "data/apollo_crm/crm_accounts.csv",
+      "write_disposition": "WRITE_TRUNCATE"
+    },
+    {
+      "name": "update_bims_dashboards",
+      "type": "api_call",
+      "endpoint": "https://datastudio.googleapis.com/v1/reports/${REPORT_ID}:batchUpdate",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer ${GCP_ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "requests": [
+          {
+            "refreshData": {}
+          }
+        ]
+      }
+    }
+  ],
+  "error_handling": {
+    "retry_count": 3,
+    "retry_delay": 300,
+    "alert_email": "matthewburbidge@fractal5solutions.com"
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "generated_at_utc": "2026-03-19T13:14:18Z",
+  "run_id": "20260319_131354",
+  "request": "ecosystem refresh/rebuild/verification + chief health confirmation",
+  "status": "degraded",
+  "baseline_snapshot": {
+    "snapshot_date": "2026-03-19",
+    "backup_dir": "D:\\phi-ops\\github\\dominion-demo-build\\backups\\ecosystem_baseline_20260319_20260319_061005",
+    "artifacts": [
+      "data/gmail_contacts/contacts.json",
+      "data/unified_relationships.json",
+      "reports/relationship_analysis.json",
+      "telemetry/erica_final_status_20260319_060119.json"
+    ]
+  },
+  "source_refresh": {
+    "sources": {
+      "apollo": {
+        "source": "apollo",
+        "run_id": "20260319_131354",
+        "started_at_utc": "2026-03-19T13:13:54Z",
+        "ended_at_utc": "2026-03-19T13:13:54Z",
+        "duration_ms": 0,
+        "status": "success",
+        "input_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\apollo_crm\\accounts_raw.json",
+        "output_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\apollo_crm\\crm_accounts.json",
+        "records_in": 3,
+        "records_out": 3,
+        "warnings": []
+      },
+      "gmail": {
+        "source": "gmail",
+        "run_id": "20260319_131354",
+        "started_at_utc": "2026-03-19T13:13:54Z",
+        "ended_at_utc": "2026-03-19T13:13:54Z",
+        "duration_ms": 0,
+        "status": "success",
+        "input_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\gmail_contacts\\contacts.json",
+        "output_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\gmail_contacts\\contacts.json",
+        "records_in": 5,
+        "records_out": 5,
+        "warnings": []
+      },
+      "google_drive": {
+        "source": "google_drive",
+        "run_id": "20260319_131354",
+        "started_at_utc": "2026-03-19T13:13:54Z",
+        "ended_at_utc": "2026-03-19T13:13:54Z",
+        "duration_ms": 2,
+        "status": "success",
+        "input_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\google_drive\\documents.json",
+        "output_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\google_drive\\documents.json",
+        "records_in": 3,
+        "records_out": 3,
+        "warnings": []
+      },
+      "dropbox": {
+        "source": "dropbox",
+        "run_id": "20260319_131354",
+        "started_at_utc": "2026-03-19T13:13:54Z",
+        "ended_at_utc": "2026-03-19T13:13:54Z",
+        "duration_ms": 0,
+        "status": "success",
+        "input_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\dropbox_drive\\files.json",
+        "output_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\dropbox_drive\\files.json",
+        "records_in": 3,
+        "records_out": 3,
+        "warnings": []
+      }
+    },
+    "telemetry_logs": {
+      "apollo": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_apollo_20260319_131354.json",
+      "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json",
+      "google_drive": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_google_drive_20260319_131354.json",
+      "dropbox": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_dropbox_20260319_131354.json"
+    }
+  },
+  "telemetry_confirmation": {
+    "latest_unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+    "unifier_log_contains_success": false,
+    "unified_relationships_file": "D:\\phi-ops\\github\\dominion-demo-build\\data\\unified_relationships.json",
+    "relationship_analysis_file": "D:\\phi-ops\\github\\dominion-demo-build\\reports\\relationship_analysis.json",
+    "quality_gates_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\quality_gates_20260319_131354.json"
+  },
+  "quality_gates": {
+    "run_id": "20260319_131354",
+    "generated_at_utc": "2026-03-19T13:13:54Z",
+    "files": {
+      "unified_relationships": "D:\\phi-ops\\github\\dominion-demo-build\\data\\unified_relationships.json",
+      "relationship_analysis": "D:\\phi-ops\\github\\dominion-demo-build\\reports\\relationship_analysis.json"
+    },
+    "gates": {
+      "schema_validity": {
+        "pass": true,
+        "report_schema_ok": true,
+        "violations": []
+      },
+      "duplicate_detection": {
+        "pass": true,
+        "duplicate_emails": []
+      },
+      "empty_email_rejection": {
+        "pass": false,
+        "empty_email_rows": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "source_coverage": {
+        "pass": true,
+        "ingestion_coverage": {
+          "apollo": {
+            "status": "success",
+            "records_out": 3,
+            "covered": true
+          },
+          "gmail": {
+            "status": "success",
+            "records_out": 5,
+            "covered": true
+          },
+          "google_drive": {
+            "status": "success",
+            "records_out": 3,
+            "covered": true
+          },
+          "dropbox": {
+            "status": "success",
+            "records_out": 3,
+            "covered": true
+          }
+        },
+        "unified_source_presence": {
+          "gmail": 5,
+          "google_drive": 4,
+          "dropbox": 4
+        }
+      },
+      "key_contact_presence": {
+        "pass": false,
+        "required_contacts": [
+          "jane.wilson@techstartup.net",
+          "john.doe@techcorp.com",
+          "mike.johnson@cloudtech.dev",
+          "sacredselfworkshops@gmail.com",
+          "sarah.smith@dataflow.io"
+        ],
+        "missing_contacts": [
+          "jane.wilson@techstartup.net",
+          "john.doe@techcorp.com",
+          "mike.johnson@cloudtech.dev",
+          "sacredselfworkshops@gmail.com",
+          "sarah.smith@dataflow.io"
+        ],
+        "erica_present": false
+      }
+    },
+    "overall_pass": false,
+    "quality_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\quality_gates_20260319_131354.json"
+  },
+  "phi_chief": {
+    "summary_file": "D:\\phi-ops\\.run\\phi-chief-of-staff-last.json",
+    "doctor_ok": true,
+    "doctor_summary": "All health checks passing",
+    "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+    "chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json",
+    "evidence_logs": {
+      "phi_status_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_check_20260319_131354.log",
+      "chief_bundle_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.log"
+    }
+  },
+  "ecosystem_summary": {
+    "total_relationships": 5,
+    "active_contacts": 5,
+    "high_value_relationships": 1,
+    "source_breakdown": {
+      "apollo_companies": 0,
+      "gmail_contacts": 5,
+      "drive_shared": 4,
+      "dropbox_shared": 4
+    }
+  },
+  "lessons_learned": [
+    "Snapshot-first execution prevents accidental data loss when relationship transforms change.",
+    "Per-source telemetry logs make ingestion failures immediately attributable and auditable.",
+    "Quality gates catch subtle trust breaks (duplicates, empty emails, key-contact drift) before downstream use.",
+    "Chief-of-staff doctor/status evidence should be attached to every ecosystem release bundle."
+  ],
+  "relationship_confirmations": [
+    {
+      "entity_name": "Mike Johnson",
+      "email": "",
+      "relationship_score": 57,
+      "interaction_count": 22,
+      "data_sources": [
+        "gmail",
+        "google_drive",
+        "dropbox"
+      ],
+      "last_updated": "2026-03-19T06:13:54.105219",
+      "telemetry_confirmed": false,
+      "telemetry_evidence": {
+        "source_refresh_logs": {
+          "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json",
+          "google_drive": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_google_drive_20260319_131354.json",
+          "dropbox": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_dropbox_20260319_131354.json"
+        },
+        "unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+        "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+        "phi_chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json"
+      }
+    },
+    {
+      "entity_name": "John Doe",
+      "email": "",
+      "relationship_score": 43,
+      "interaction_count": 15,
+      "data_sources": [
+        "gmail",
+        "google_drive",
+        "dropbox"
+      ],
+      "last_updated": "2026-03-19T06:13:54.105219",
+      "telemetry_confirmed": false,
+      "telemetry_evidence": {
+        "source_refresh_logs": {
+          "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json",
+          "google_drive": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_google_drive_20260319_131354.json",
+          "dropbox": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_dropbox_20260319_131354.json"
+        },
+        "unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+        "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+        "phi_chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json"
+      }
+    },
+    {
+      "entity_name": "Sarah Smith",
+      "email": "",
+      "relationship_score": 24,
+      "interaction_count": 8,
+      "data_sources": [
+        "gmail",
+        "google_drive",
+        "dropbox"
+      ],
+      "last_updated": "2026-03-19T06:13:54.105219",
+      "telemetry_confirmed": false,
+      "telemetry_evidence": {
+        "source_refresh_logs": {
+          "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json",
+          "google_drive": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_google_drive_20260319_131354.json",
+          "dropbox": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_dropbox_20260319_131354.json"
+        },
+        "unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+        "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+        "phi_chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json"
+      }
+    },
+    {
+      "entity_name": "Jane Wilson",
+      "email": "",
+      "relationship_score": 18,
+      "interaction_count": 5,
+      "data_sources": [
+        "gmail",
+        "google_drive",
+        "dropbox"
+      ],
+      "last_updated": "2026-03-19T06:13:54.105219",
+      "telemetry_confirmed": false,
+      "telemetry_evidence": {
+        "source_refresh_logs": {
+          "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json",
+          "google_drive": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_google_drive_20260319_131354.json",
+          "dropbox": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_dropbox_20260319_131354.json"
+        },
+        "unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+        "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+        "phi_chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json"
+      }
+    },
+    {
+      "entity_name": "Erica",
+      "email": "",
+      "relationship_score": 2,
+      "interaction_count": 1,
+      "data_sources": [
+        "gmail"
+      ],
+      "last_updated": "2026-03-19T06:13:54.105219",
+      "telemetry_confirmed": false,
+      "telemetry_evidence": {
+        "source_refresh_logs": {
+          "gmail": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\source_refresh_gmail_20260319_131354.json"
+        },
+        "unifier_log": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\erica_unifier_20260319_131354.log",
+        "phi_status_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_status_20260319_131354.json",
+        "phi_chief_bundle_file": "D:\\phi-ops\\github\\dominion-demo-build\\telemetry\\phi_chief_bundle_20260319_131354.json"
+      }
+    }
+  ],
+  "operationalization": {
+    "timezone": "America/Vancouver",
+    "cadence": {
+      "source_sync": "Every 4 hours at minute 05",
+      "unified_rebuild": "Every 4 hours at minute 20",
+      "quality_and_bundle_verification": "Every 4 hours at minute 35",
+      "chief_health_bundle": "Daily at 06:15"
+    },
+    "alert_thresholds": {
+      "source_ingestion_failure": {
+        "critical": "Any source refresh status != success in a run",
+        "warning": "Source refresh duration > 15 minutes"
+      },
+      "relationship_count_anomaly": {
+        "warning": "Absolute change > 10% vs trailing 7-run median",
+        "critical": "Absolute change > 25% vs trailing 7-run median"
+      },
+      "data_quality": {
+        "critical": "Any duplicate emails OR any empty-email rows",
+        "critical_key_contact": "Any missing key contact (including Erica)"
+      }
+    }
+  },
+  "definition_of_done": {
+    "checks": {
+      "all_source_refreshes_succeed_with_telemetry": true,
+      "unified_relationships_regenerated_and_quality_passed": false,
+      "chief_of_staff_health_green_doctor_ok": true,
+      "final_bundle_confirms_telemetry_for_all_relationships": false
+    },
+    "all_passed": false
+  }
+}

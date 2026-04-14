@@ -1,0 +1,17 @@
+**
+!.dockerignore
+!Dockerfile.production
+!command_core.py
+!requirements-prod.txt
+!demo/
+!demo/**
+!products/
+!products/**
+!store/
+!store/**
+!scripts/
+!scripts/telemetry/
+!scripts/telemetry/config_project1.txt
+!scripts/telemetry/config_project2.txt
+!scripts/telemetry/services_project1.txt
+!scripts/telemetry/services_project2.txt

@@ -1,0 +1,29 @@
+{
+  "scan_id": "qa_20260309_132427",
+  "timestamp": "2026-03-09 13:24:33 UTC",
+  "quality_metrics": {
+    "code_quality": {
+      "score": 100,
+      "total_files": 27768,
+      "error_files": 0
+    },
+    "security": {
+      "score": 0,
+      "issues_found": 49
+    },
+    "performance": {
+      "score": 95
+    },
+    "test_coverage": {
+      "score": 100,
+      "test_files": 4977
+    }
+  },
+  "overall_score": 73,
+  "recommendations": [
+    
+    "Address security vulnerabilities in scripts",
+    
+    "Continue monitoring and improvement"
+  ]
+}

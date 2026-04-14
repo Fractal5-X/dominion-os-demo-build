@@ -1,0 +1,16 @@
+[Unit]
+Description=PHI Daily Live Ops Health Check Timer
+Documentation=https://github.com/Fractal5-Solutions/dominion-os-demo-build/blob/main/SOVEREIGN_AUTOPILOT_GUIDE.md
+Requires=phi-daily-monitoring.service
+
+[Timer]
+# Run daily at 9:00 AM
+OnCalendar=*-*-* 09:00:00
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
+
+# Check timer status:
+# systemctl list-timers phi-daily-monitoring.timer

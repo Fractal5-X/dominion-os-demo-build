@@ -1,0 +1,22 @@
+{
+  "as_of": "2026-04-14",
+  "source": "House of Commons party leaders and house officers",
+  "source_url": "https://www.ourcommons.ca/members/en/house-officers",
+  "leaders": {
+    "Liberal": {
+      "name": "Mark Carney",
+      "title": "Leader of the Liberal Party",
+      "from": "2025-03-09"
+    },
+    "Conservative": {
+      "name": "Pierre Poilievre",
+      "title": "Leader of the Conservative Party of Canada",
+      "from": "2022-09-10"
+    },
+    "Bloc Quebecois": {
+      "name": "Yves-Francois Blanchet",
+      "title": "Leader of the Bloc Quebecois",
+      "from": "2019-10-21"
+    }
+  }
+}

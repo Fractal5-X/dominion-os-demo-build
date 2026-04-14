@@ -1,0 +1,325 @@
+[
+  {
+    "entity_id": "contact_136865",
+    "entity_name": "Mike Johnson",
+    "entity_type": "",
+    "email": "",
+    "domain": "cloudtech.dev",
+    "apollo_data": {},
+    "gmail_data": {
+      "name": "Mike Johnson",
+      "email": "mike.johnson@cloudtech.dev",
+      "interaction_count": 22,
+      "last_contact": "2024-03-02T11:20:00Z",
+      "first_contact": "2023-12-10T13:30:00Z",
+      "threads": [
+        "thread_006",
+        "thread_007",
+        "thread_008",
+        "thread_009"
+      ]
+    },
+    "drive_data": [
+      {
+        "id": "doc_002",
+        "name": "Technical Architecture.pdf",
+        "mime_type": "application/pdf",
+        "size": 2097152,
+        "created_time": "2024-02-01T09:15:00Z",
+        "modified_time": "2024-02-15T16:20:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "mike.johnson@cloudtech.dev",
+          "jane.wilson@techstartup.net"
+        ],
+        "web_view_link": "https://drive.google.com/file/d/doc_002",
+        "description": "System architecture documentation and design specifications"
+      },
+      {
+        "id": "doc_003",
+        "name": "Client Proposal Template.docx",
+        "mime_type": "application/vnd.google-apps.document",
+        "size": 1048576,
+        "created_time": "2024-01-20T11:30:00Z",
+        "modified_time": "2024-03-01T13:45:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "john.doe@techcorp.com",
+          "mike.johnson@cloudtech.dev"
+        ],
+        "web_view_link": "https://docs.google.com/document/d/doc_003",
+        "description": "Standard client proposal template with pricing models"
+      }
+    ],
+    "dropbox_data": [
+      {
+        "id": "file_002",
+        "name": "Data_Analysis_Report.pdf",
+        "path": "/Reports/Q1/Data_Analysis_Report.pdf",
+        "size": 3145728,
+        "server_modified": "2024-02-25T14:30:00Z",
+        "client_modified": "2024-02-25T14:30:00Z",
+        "rev": "e5f6g7h8",
+        "content_hash": "def456ghi789",
+        "shared_with": [
+          "sarah.smith@dataflow.io",
+          "mike.johnson@cloudtech.dev"
+        ]
+      }
+    ],
+    "relationship_score": 57,
+    "last_interaction": "2024-03-02 11:20:00+00:00",
+    "interaction_count": 22,
+    "data_sources": [
+      "gmail",
+      "google_drive",
+      "dropbox"
+    ],
+    "tags": [],
+    "notes": "",
+    "last_updated": "2026-03-19T05:50:16.114386"
+  },
+  {
+    "entity_id": "contact_104783",
+    "entity_name": "John Doe",
+    "entity_type": "",
+    "email": "",
+    "domain": "techcorp.com",
+    "apollo_data": {},
+    "gmail_data": {
+      "name": "John Doe",
+      "email": "john.doe@techcorp.com",
+      "interaction_count": 15,
+      "last_contact": "2024-03-01T10:30:00Z",
+      "first_contact": "2024-01-15T14:20:00Z",
+      "threads": [
+        "thread_001",
+        "thread_002",
+        "thread_003"
+      ]
+    },
+    "drive_data": [
+      {
+        "id": "doc_001",
+        "name": "Q1 Business Review.pptx",
+        "mime_type": "application/vnd.google-apps.presentation",
+        "size": 5242880,
+        "created_time": "2024-01-15T10:00:00Z",
+        "modified_time": "2024-02-28T14:30:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "john.doe@techcorp.com",
+          "sarah.smith@dataflow.io"
+        ],
+        "web_view_link": "https://docs.google.com/presentation/d/doc_001",
+        "description": "Q1 business performance and strategic initiatives"
+      },
+      {
+        "id": "doc_003",
+        "name": "Client Proposal Template.docx",
+        "mime_type": "application/vnd.google-apps.document",
+        "size": 1048576,
+        "created_time": "2024-01-20T11:30:00Z",
+        "modified_time": "2024-03-01T13:45:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "john.doe@techcorp.com",
+          "mike.johnson@cloudtech.dev"
+        ],
+        "web_view_link": "https://docs.google.com/document/d/doc_003",
+        "description": "Standard client proposal template with pricing models"
+      }
+    ],
+    "dropbox_data": [
+      {
+        "id": "file_001",
+        "name": "Project_Plan_v2.xlsx",
+        "path": "/Projects/TechCorp/Project_Plan_v2.xlsx",
+        "size": 1572864,
+        "server_modified": "2024-02-20T10:15:00Z",
+        "client_modified": "2024-02-20T10:15:00Z",
+        "rev": "a1b2c3d4",
+        "content_hash": "abc123def456",
+        "shared_with": [
+          "john.doe@techcorp.com"
+        ]
+      }
+    ],
+    "relationship_score": 43,
+    "last_interaction": "2024-03-01 10:30:00+00:00",
+    "interaction_count": 15,
+    "data_sources": [
+      "gmail",
+      "google_drive",
+      "dropbox"
+    ],
+    "tags": [],
+    "notes": "",
+    "last_updated": "2026-03-19T05:50:16.114051"
+  },
+  {
+    "entity_id": "contact_600052",
+    "entity_name": "Sarah Smith",
+    "entity_type": "",
+    "email": "",
+    "domain": "dataflow.io",
+    "apollo_data": {},
+    "gmail_data": {
+      "name": "Sarah Smith",
+      "email": "sarah.smith@dataflow.io",
+      "interaction_count": 8,
+      "last_contact": "2024-02-28T16:45:00Z",
+      "first_contact": "2024-02-01T09:15:00Z",
+      "threads": [
+        "thread_004",
+        "thread_005"
+      ]
+    },
+    "drive_data": [
+      {
+        "id": "doc_001",
+        "name": "Q1 Business Review.pptx",
+        "mime_type": "application/vnd.google-apps.presentation",
+        "size": 5242880,
+        "created_time": "2024-01-15T10:00:00Z",
+        "modified_time": "2024-02-28T14:30:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "john.doe@techcorp.com",
+          "sarah.smith@dataflow.io"
+        ],
+        "web_view_link": "https://docs.google.com/presentation/d/doc_001",
+        "description": "Q1 business performance and strategic initiatives"
+      }
+    ],
+    "dropbox_data": [
+      {
+        "id": "file_002",
+        "name": "Data_Analysis_Report.pdf",
+        "path": "/Reports/Q1/Data_Analysis_Report.pdf",
+        "size": 3145728,
+        "server_modified": "2024-02-25T14:30:00Z",
+        "client_modified": "2024-02-25T14:30:00Z",
+        "rev": "e5f6g7h8",
+        "content_hash": "def456ghi789",
+        "shared_with": [
+          "sarah.smith@dataflow.io",
+          "mike.johnson@cloudtech.dev"
+        ]
+      }
+    ],
+    "relationship_score": 24,
+    "last_interaction": "2024-02-28 16:45:00+00:00",
+    "interaction_count": 8,
+    "data_sources": [
+      "gmail",
+      "google_drive",
+      "dropbox"
+    ],
+    "tags": [],
+    "notes": "",
+    "last_updated": "2026-03-19T05:50:16.114378"
+  },
+  {
+    "entity_id": "contact_226876",
+    "entity_name": "Jane Wilson",
+    "entity_type": "",
+    "email": "",
+    "domain": "techstartup.net",
+    "apollo_data": {},
+    "gmail_data": {
+      "name": "Jane Wilson",
+      "email": "jane.wilson@techstartup.net",
+      "interaction_count": 5,
+      "last_contact": "2024-02-25T08:10:00Z",
+      "first_contact": "2024-02-20T15:45:00Z",
+      "threads": [
+        "thread_010"
+      ]
+    },
+    "drive_data": [
+      {
+        "id": "doc_002",
+        "name": "Technical Architecture.pdf",
+        "mime_type": "application/pdf",
+        "size": 2097152,
+        "created_time": "2024-02-01T09:15:00Z",
+        "modified_time": "2024-02-15T16:20:00Z",
+        "owners": [
+          "matthew.burbidge@fractal5solutions.com"
+        ],
+        "shared_with": [
+          "mike.johnson@cloudtech.dev",
+          "jane.wilson@techstartup.net"
+        ],
+        "web_view_link": "https://drive.google.com/file/d/doc_002",
+        "description": "System architecture documentation and design specifications"
+      }
+    ],
+    "dropbox_data": [
+      {
+        "id": "file_003",
+        "name": "Meeting_Notes.txt",
+        "path": "/Meetings/2024-03-01/Meeting_Notes.txt",
+        "size": 16384,
+        "server_modified": "2024-03-01T16:00:00Z",
+        "client_modified": "2024-03-01T16:00:00Z",
+        "rev": "i9j0k1l2",
+        "content_hash": "ghi789jkl012",
+        "shared_with": [
+          "jane.wilson@techstartup.net"
+        ]
+      }
+    ],
+    "relationship_score": 18,
+    "last_interaction": "2024-02-25 08:10:00+00:00",
+    "interaction_count": 5,
+    "data_sources": [
+      "gmail",
+      "google_drive",
+      "dropbox"
+    ],
+    "tags": [],
+    "notes": "",
+    "last_updated": "2026-03-19T05:50:16.114387"
+  },
+  {
+    "entity_id": "contact_454786",
+    "entity_name": "Erica",
+    "entity_type": "",
+    "email": "",
+    "domain": "gmail.com",
+    "apollo_data": {},
+    "gmail_data": {
+      "name": "Erica",
+      "email": "sacredselfworkshops@gmail.com",
+      "interaction_count": 1,
+      "last_contact": "2026-03-19T00:00:00Z",
+      "first_contact": "2026-03-19T00:00:00Z",
+      "threads": [
+        "thread_erica_seed"
+      ]
+    },
+    "drive_data": [],
+    "dropbox_data": [],
+    "relationship_score": 2,
+    "last_interaction": "2026-03-19 00:00:00+00:00",
+    "interaction_count": 1,
+    "data_sources": [
+      "gmail"
+    ],
+    "tags": [],
+    "notes": "",
+    "last_updated": "2026-03-19T05:50:16.114389"
+  }
+]

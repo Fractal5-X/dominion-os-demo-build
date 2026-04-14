@@ -1,0 +1,25 @@
+{
+  "date": "2026-03-17",
+  "repo": "dominion-demo-build",
+  "role": "public-demo-serving",
+  "scope": {
+    "platforms_included": ["desktop", "cloud"],
+    "platforms_excluded": ["mobile"],
+    "repo_set": [
+      "dominion-command-center",
+      "dominion-demo-build",
+      "dominion-os-1.0-desktop-pc",
+      "dominion-os-1.0-gcloud",
+      "dominion-os-1.0-politics"
+    ]
+  },
+  "mandatory_stack": {
+    "phi_mcp": true,
+    "dominion_core": true,
+    "saas_suite": true
+  },
+  "authority": {
+    "authoritative_runtime": false,
+    "source_of_truth_repo": "dominion-command-center"
+  }
+}

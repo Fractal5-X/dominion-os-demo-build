@@ -1,35 +1,33 @@
 # Dominion OS Demo Build
 
-![Demo](https://img.shields.io/badge/Demo-Ready-brightgreen)
-[![Dominion OS](https://img.shields.io/badge/Depends%20on-dominion--os--1.0-blue)](https://github.com/Fractal5-Solutions/dominion-os-1.0)
-![Cloud Run](https://img.shields.io/badge/Deployed-Google%20Cloud%20Run-4285F4?logo=googlecloud&logoColor=white)
-![License](https://img.shields.io/badge/license-Commercial-blue)
+Public-facing demo service repository for Dominion OS.
 
-This repo demonstrates consuming the sibling [`dominion-os-1.0`](https://github.com/Fractal5-Solutions/dominion-os-1.0) toy kernel to:
+## Purpose
 
-- Build a JSON image
-- Run a demo and save outputs to `dist/`
+- Hosts demo UX and supporting demo APIs.
+- Demonstrates `dominion-command-center` capabilities in a marketable SaaS presentation.
+- Focuses on business overlays only for this stream.
 
-Quickstart
+## Core Demo Capabilities
 
-- Build: `python demo_build.py build`
-- Run demo: `python demo_build.py run`
-- Tests: `python -m unittest`
+- Dominion OS Core and top feature walkthroughs.
+- Google Cloud SaaS integration surface for demo scenarios.
+- Shapefile mapping workflows for geo/business visualization.
+- Google API integrations for broader cloud-universe demonstrations.
 
-Command Core (full experience)
+## Governance
 
-- Run interactive dashboard (small scale):
-    - `python demo_build.py command-core --duration 120 --scale small`
-- Headless, generate artifacts only:
-    - `python demo_build.py command-core --duration 100 --scale medium --no-ui`
-- Artifacts are written to `dist/command_core/` as `events.log`, `session.json`, and `summary.txt`.
+- This repo is serving-only and non-authoritative.
+- Control plane and source-of-truth runtime authority remains in `dominion-command-center`.
+- Demo content in this repo is intended for public presentation use.
+- Production demo packaging must remain public-safe: no secrets, no tokens, no CRM/contact dumps, and no plain-source runtime payload in the final demo image.
 
-Autopilot (NHITL)
+## Proof Artifacts
 
-- Single automated run at large scale:
-    - `python demo_build.py autopilot --scale large --duration 300`
-- Multiple back-to-back runs with interval:
-    - `python demo_build.py autopilot --scale medium --duration 120 --runs 3 --interval-ms 500`
-- Output: flight summaries saved under `dist/command_core/flight_*.json`.
+- `DOMINION_OS_DEPLOYMENT_PROOF.md`
+- `OPTIMAL_DEPLOYMENT_PROOF.md`
+- `PRODUCTION_READINESS_PROOF.md`
 
-Note: This demo imports `dominion_os` from the sibling path `../dominion-os-1.0` without installing it. This keeps it network-free.
+## Runbook Notes
+
+- Probe semantics for `/status` and `/api/v1/topology` are documented in `RUNBOOK_STATUS_PROBES.md`.

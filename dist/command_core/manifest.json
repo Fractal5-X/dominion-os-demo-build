@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-03-31T14:29:22.680506+00:00",
+  "artifact_root": "/workspaces/dominion-os-demo-build/dist/command_core",
+  "demo_root": "/workspaces/dominion-os-demo-build",
+  "artifact_type": "command_core_dist",
+  "product_count": 3,
+  "products": [
+    "dominion-cloud-computer",
+    "dominion-os-1.0-desktop-pc",
+    "dominion-os-1.0-gcloud"
+  ]
+}

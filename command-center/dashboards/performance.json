@@ -1,0 +1,43 @@
+{
+  "dashboard": {
+    "title": "Dominion OS Command Center - Performance",
+    "refresh_interval_seconds": 30,
+    "panels": [
+      {
+        "title": "System Health Score",
+        "type": "gauge",
+        "metric": "sovereign_health_score",
+        "thresholds": {
+          "warning": 85,
+          "critical": 70
+        }
+      },
+      {
+        "title": "Response Time",
+        "type": "line_chart",
+        "metric": "response_time_ms",
+        "target": 100
+      },
+      {
+        "title": "Active Services",
+        "type": "status_table",
+        "services": [
+          "mcp-server",
+          "sovereign-autopilot",
+          "ai-improvement-engine",
+          "monitoring-stack"
+        ]
+      },
+      {
+        "title": "Resource Usage",
+        "type": "multi_line_chart",
+        "metrics": ["cpu_percent", "memory_percent", "disk_percent"],
+        "thresholds": {
+          "cpu": 80,
+          "memory": 85,
+          "disk": 90
+        }
+      }
+    ]
+  }
+}

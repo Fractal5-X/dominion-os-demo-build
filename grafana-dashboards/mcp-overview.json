@@ -1,0 +1,165 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "mcp-live-ops",
+    "title": "MCP Services - Sovereign Live Ops Dashboard",
+    "tags": ["mcp", "phi", "live-ops", "sovereign"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "type": "stat",
+        "title": "Service Health Status",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "up{job=~\"mcp-.*\"}",
+            "legendFormat": "{{job}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            },
+            "mappings": [
+              {"type": "value", "value": "0", "text": "DOWN"},
+              {"type": "value", "value": "1", "text": "UP"}
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "type": "gauge",
+        "title": "Overall System Score",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(up{job=~\"mcp-.*\"}) / 9 * 100",
+            "legendFormat": "MCP Score",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 60, "color": "yellow"},
+                {"value": 75, "color": "green"},
+                {"value": 90, "color": "dark-green"}
+              ]
+            },
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": {"h": 10, "w": 24, "x": 0, "y": 8},
+        "type": "graph",
+        "title": "CPU Usage by Service (%)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{name=~\"mcp-.*\"}[5m]) * 100",
+            "legendFormat": "{{name}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "percent", "label": "CPU Usage"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": {"h": 10, "w": 24, "x": 0, "y": 18},
+        "type": "graph",
+        "title": "Memory Usage by Service (MB)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "container_memory_usage_bytes{name=~\"mcp-.*\"} / 1024 / 1024",
+            "legendFormat": "{{name}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {"format": "decmbytes", "label": "Memory"},
+          {"format": "short"}
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 28},
+        "type": "graph",
+        "title": "Network Receive (bytes/sec)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(container_network_receive_bytes_total{name=~\"mcp-.*\"}[5m])",
+            "legendFormat": "{{name}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 28},
+        "type": "graph",
+        "title": "Network Transmit (bytes/sec)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "rate(container_network_transmit_bytes_total{name=~\"mcp-.*\"}[5m])",
+            "legendFormat": "{{name}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 38},
+        "type": "table",
+        "title": "Service Status Summary",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "up{job=~\"mcp-.*\"}",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "job": "Service",
+                "Value": "Status"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

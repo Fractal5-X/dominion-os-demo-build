@@ -1,0 +1,50 @@
+{
+  "analytics": {
+    "conversion_funnel": {
+      "visitors": 1000,
+      "product_views": 300,
+      "add_to_cart": 50,
+      "purchases": 15,
+      "conversion_rate": 1.5
+    },
+    "revenue_projections": {
+      "monthly_target": 15000,
+      "annual_target": 180000,
+      "current_month": 2500,
+      "growth_rate": 25
+    },
+    "product_performance": [
+      {
+        "sku": "DOM-OS-GCLOUD-001",
+        "name": "Dominion OS 1.0 - Google Cloud",
+        "sales": 8,
+        "revenue": 2392,
+        "conversion_rate": 2.1
+      },
+      {
+        "sku": "DOM-OS-DESKTOP-001",
+        "name": "Dominion OS 1.0 - Desktop PC",
+        "sales": 5,
+        "revenue": 2495,
+        "conversion_rate": 1.8
+      },
+      {
+        "sku": "DOM-CC-001",
+        "name": "Dominion Cloud Computer",
+        "sales": 2,
+        "revenue": 398,
+        "conversion_rate": 0.8
+      }
+    ]
+  },
+  "optimization_recommendations": [
+    "Implement A/B testing for pricing strategies",
+    "Add customer testimonials and case studies",
+    "Optimize product descriptions for SEO",
+    "Implement email marketing automation",
+    "Add live chat support for conversion optimization",
+    "Create product comparison matrix",
+    "Implement referral program",
+    "Add free trial options where applicable"
+  ]
+}

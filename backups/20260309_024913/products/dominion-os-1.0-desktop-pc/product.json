@@ -1,0 +1,28 @@
+{
+  "name": "Dominion OS 1.0 - Desktop PC",
+  "version": "1.0.0",
+  "sku": "DOM-OS-DESKTOP-001",
+  "description": "Complete sovereign AI infrastructure for local desktop deployment with Docker Desktop Pro integration",
+  "pricing": {
+    "one_time": 499,
+    "currency": "USD"
+  },
+  "features": [
+    "Local MCP deployment",
+    "Docker Desktop Pro integration",
+    "Sovereign AI autonomy",
+    "Offline operation capability",
+    "Security hardening included",
+    "Community support"
+  ],
+  "deployment": {
+    "platform": "desktop",
+    "infrastructure": "sovereign",
+    "monitoring": "local"
+  },
+  "support": {
+    "level": "community",
+    "response_time": "24_hours",
+    "uptime_sla": "self_managed"
+  }
+}

@@ -1,0 +1,3 @@
+# PHI Automated Improvement & Deployment Cron
+# Runs every hour for continuous perfection
+0 * * * * /workspaces/dominion-os-demo-build/scripts/phi_automated_improvement_and_deployment.sh >> /workspaces/dominion-os-demo-build/logs/phi_automation_cron.log 2>&1

@@ -1,0 +1,35 @@
+{
+  "support_tiers": {
+    "community": {
+      "response_time": "24_hours",
+      "channels": ["github_issues", "discord"],
+      "features": ["documentation", "community_forums"]
+    },
+    "commercial": {
+      "response_time": "4_hours",
+      "channels": ["email", "support_portal", "phone"],
+      "features": ["priority_support", "dedicated_engineer", "custom_integrations"]
+    },
+    "enterprise": {
+      "response_time": "1_hour",
+      "channels": ["email", "support_portal", "phone", "slack"],
+      "features": ["white_glove_service", "custom_development", "on_premise_deployment"]
+    }
+  },
+  "knowledge_base": {
+    "categories": [
+      "Installation & Setup",
+      "Configuration & Optimization",
+      "Troubleshooting",
+      "Security & Hardening",
+      "Performance Tuning",
+      "Integration Guides"
+    ]
+  },
+  "support_metrics": {
+    "average_response_time": "2.5_hours",
+    "customer_satisfaction": 4.8,
+    "resolution_rate": 95,
+    "active_tickets": 12
+  }
+}

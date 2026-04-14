@@ -1,0 +1,44 @@
+{
+  "health_checks": {
+    "interval_seconds": 60,
+    "checks": [
+      {
+        "name": "api_responsiveness",
+        "type": "http",
+        "url": "http://localhost:8080/health",
+        "timeout_seconds": 5,
+        "expected_status": 200
+      },
+      {
+        "name": "database_connectivity",
+        "type": "tcp",
+        "host": "localhost",
+        "port": 5432,
+        "timeout_seconds": 3
+      },
+      {
+        "name": "sovereign_services",
+        "type": "process",
+        "processes": ["phi_sovereign_autopilot", "ai_improvement_engine"],
+        "min_instances": 1
+      },
+      {
+        "name": "resource_limits",
+        "type": "system",
+        "metrics": {
+          "cpu_percent": {"max": 80},
+          "memory_percent": {"max": 85},
+          "disk_percent": {"max": 90}
+        }
+      }
+    ],
+    "alerts": {
+      "channels": ["email", "slack", "dashboard"],
+      "escalation_policy": {
+        "warning": "notify_team",
+        "critical": "page_on_call",
+        "emergency": "emergency_protocol"
+      }
+    }
+  }
+}

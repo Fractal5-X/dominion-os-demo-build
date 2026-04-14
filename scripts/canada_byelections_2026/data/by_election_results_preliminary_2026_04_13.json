@@ -1,0 +1,90 @@
+{
+  "election_date_local": "2026-04-13",
+  "status": "preliminary_results",
+  "source": "Elections Canada Election Night Results (ENR)",
+  "source_url": "https://enr.elections.ca/ElectoralDistricts.aspx?lang=e",
+  "ridings": {
+    "Scarborough Southwest": {
+      "province": "ON",
+      "enr_url": "https://enr.elections.ca/ElectoralDistricts.aspx?ed=2475&lang=e",
+      "last_updated_et": "2026-04-13T23:23:00-04:00",
+      "polls_reporting": {
+        "reported": 188,
+        "total": 188,
+        "pct": 100.0
+      },
+      "valid_votes": 28778,
+      "registered_electors": 85796,
+      "turnout_pct": 33.54,
+      "winner": {
+        "party": "Liberal",
+        "candidate": "Doly Begum",
+        "votes": 20114,
+        "vote_pct": 69.9
+      },
+      "votes_by_party": {
+        "Liberal": 20114,
+        "Conservative": 5300,
+        "NDP": 1714,
+        "Green": 711,
+        "PPC": 265,
+        "Other": 674
+      }
+    },
+    "Terrebonne": {
+      "province": "QC",
+      "enr_url": "https://enr.elections.ca/ElectoralDistricts.aspx?ed=2373&lang=e",
+      "last_updated_et": "2026-04-14T00:18:00-04:00",
+      "polls_reporting": {
+        "reported": 211,
+        "total": 211,
+        "pct": 100.0
+      },
+      "valid_votes": 46369,
+      "registered_electors": 91344,
+      "turnout_pct": 50.76,
+      "winner": {
+        "party": "Liberal",
+        "candidate": "Tatiana Auguste",
+        "votes": 22445,
+        "vote_pct": 48.4
+      },
+      "votes_by_party": {
+        "Liberal": 22445,
+        "Bloc Quebecois": 21714,
+        "Conservative": 1551,
+        "NDP": 249,
+        "Green": 191,
+        "PPC": 105,
+        "Other": 114
+      }
+    },
+    "University-Rosedale": {
+      "province": "ON",
+      "enr_url": "https://enr.elections.ca/ElectoralDistricts.aspx?ed=2489&lang=e",
+      "last_updated_et": "2026-04-14T00:35:00-04:00",
+      "polls_reporting": {
+        "reported": 153,
+        "total": 153,
+        "pct": 100.0
+      },
+      "valid_votes": 31000,
+      "registered_electors": 93971,
+      "turnout_pct": 32.99,
+      "winner": {
+        "party": "Liberal",
+        "candidate": "Danielle Martin",
+        "votes": 19961,
+        "vote_pct": 64.4
+      },
+      "votes_by_party": {
+        "Liberal": 19961,
+        "Conservative": 3843,
+        "NDP": 5869,
+        "Green": 896,
+        "PPC": 205,
+        "Other": 226
+      }
+    }
+  }
+}

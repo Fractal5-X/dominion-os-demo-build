@@ -1,0 +1,63 @@
+# Common optimizations to apply to all workflows
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true  # Cancel redundant runs (saves 20-40% minutes)
+
+# Conditional execution to skip unnecessary runs
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+
+# Artifact retention optimization
+defaults:
+  run:
+    shell: bash
+  
+env:
+  # Use GitHub's native caching
+  CACHE_VERSION: v1
+  
+jobs:
+  optimizations:
+    timeout-minutes: 15  # Prevent runaway jobs
+    
+    steps:
+      # Use optimized checkout (shallow clone)
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Shallow clone saves 30-50% checkout time
+      
+      # Cache dependencies aggressively
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pre-commit
+            node_modules
+            .venv
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/requirements.txt', '**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+      
+      # Use setup-python cache option
+      - uses: actions/setup-python@v5
+        with:
+          cache: 'pip'
+          cache-dependency-path: '**/requirements*.txt'
+      
+      # Optimize artifact uploads
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7  # Default is 90 days - reduce to save storage
+          compression-level: 9  # Maximum compression

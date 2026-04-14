@@ -1,0 +1,29 @@
+{
+  "accessibility_features": {
+    "keyboard_shortcuts": {
+      "skip_to_main": "Alt+S",
+      "toggle_high_contrast": "Alt+C",
+      "increase_font_size": "Alt++",
+      "decrease_font_size": "Alt+-",
+      "toggle_animations": "Alt+A"
+    },
+    "screen_reader_support": {
+      "aria_labels": true,
+      "live_regions": true,
+      "semantic_html": true,
+      "focus_management": true
+    },
+    "visual_improvements": {
+      "high_contrast_mode": true,
+      "reduced_motion": true,
+      "large_text_support": true,
+      "color_blind_friendly": true
+    },
+    "navigation": {
+      "breadcrumb_trail": true,
+      "table_of_contents": true,
+      "search_functionality": true,
+      "progress_indicators": true
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "app_version": "AUTO",
+  "overlay": "business",
+  "source_of_truth": {
+    "repo": "dominion-command-center",
+    "sha": "70f1d08cf537",
+    "version": "70f1d08cf537"
+  }
+}

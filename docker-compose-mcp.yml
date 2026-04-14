@@ -1,0 +1,266 @@
+# Docker Compose for MCP Servers - Optimal Configuration
+# For Docker Desktop Pro with 16+ CPUs and 48+ GB RAM
+
+services:
+  # Atlassian MCP Server (Jira/Confluence)
+  mcp-atlassian:
+    image: node:18-alpine
+    container_name: mcp-atlassian
+    restart: unless-stopped
+    command: sh -c "npm install -g @modelcontextprotocol/server-atlassian && mcp-server-atlassian"
+    environment:
+      - ATLASSIAN_API_TOKEN=${ATLASSIAN_API_TOKEN}
+      - ATLASSIAN_BASE_URL=${ATLASSIAN_BASE_URL}
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    mem_limit: 2g
+    cpus: 2.0
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "3000:3000"
+
+  # GitHub MCP Server
+  mcp-github:
+    image: node:18-alpine
+    container_name: mcp-github
+    restart: unless-stopped
+    command: sh -c "apk add --no-cache bash curl >/dev/null && npm install -g @modelcontextprotocol/server-github && /workspace/scripts/start_mcp_github.sh"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_API_URL=${GITHUB_API_URL:-https://api.github.com}
+      - HTTP_PROXY=${HTTP_PROXY:-}
+      - HTTPS_PROXY=${HTTPS_PROXY:-}
+      - NO_PROXY=${NO_PROXY:-}
+      - http_proxy=${http_proxy:-}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=${no_proxy:-}
+      - NODE_ENV=production
+    mem_limit: 2g
+    cpus: 2.0
+    networks:
+      - mcp-network
+    volumes:
+      - ./scripts:/workspace/scripts:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/workspace/scripts/start_mcp_github.sh --healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "3003:3003"
+
+  # Stripe MCP Server
+  mcp-stripe:
+    image: node:18-alpine
+    container_name: mcp-stripe
+    restart: unless-stopped
+    command: sh -c "npm install -g @stripe/mcp-server && stripe-mcp-server"
+    environment:
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - NODE_ENV=production
+    mem_limit: 2g
+    cpus: 2.0
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "3002:3002"
+
+  # Playwright MCP Server (Browser Automation)
+  mcp-playwright:
+    image: mcr.microsoft.com/playwright:v1.40.0-jammy
+    container_name: mcp-playwright
+    restart: unless-stopped
+    command: sh -c "npm install -g @playwright/mcp-server && playwright-mcp-server"
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+      - NODE_ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    networks:
+      - mcp-network
+    volumes:
+      - playwright-cache:/ms-playwright
+    shm_size: '2gb'
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    ports:
+      - "3004:3004"
+
+  # Chrome Browser MCP Server
+  mcp-chrome:
+    image: browserless/chrome:latest
+    container_name: mcp-chrome
+    restart: unless-stopped
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+      - CONNECTION_TIMEOUT=60000
+      - PREBOOT_CHROME=true
+      - ENABLE_DEBUGGER=false
+    mem_limit: 4g
+    cpus: 4.0
+    networks:
+      - mcp-network
+    shm_size: '2gb'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/pressure"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    ports:
+      - "3005:3000"
+
+  # Python Pylance MCP Server
+  mcp-pylance:
+    image: python:3.12-slim
+    container_name: mcp-pylance
+    restart: unless-stopped
+    command: sh -c "pip install pylance-mcp-server && pylance-mcp-server"
+    environment:
+      - PYTHON_VERSION=3.12
+      - PYTHONUNBUFFERED=1
+    mem_limit: 3g
+    cpus: 2.0
+    networks:
+      - mcp-network
+    volumes:
+      - pylance-cache:/cache
+      - /workspaces/dominion-os-demo-build:/workspace:cached
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; print(sys.version)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "3007:3007"
+
+  # Figma MCP Server
+  mcp-figma:
+    image: node:18-alpine
+    container_name: mcp-figma
+    restart: unless-stopped
+    command: sh -c "npm install -g @figma/mcp-server && figma-mcp-server"
+    environment:
+      - FIGMA_API_TOKEN=${FIGMA_API_TOKEN}
+      - FIGMA_CACHE_ENABLED=true
+      - NODE_ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    networks:
+      - mcp-network
+    volumes:
+      - figma-cache:/cache
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - "3001:3001"
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mcp-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    networks:
+      - mcp-network
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mcp-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/mcp-overview.json
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - mcp-network
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3008:3000"
+    depends_on:
+      - prometheus
+
+networks:
+  mcp-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
+
+volumes:
+  playwright-cache:
+    driver: local
+  pylance-cache:
+    driver: local
+  figma-cache:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominion OS Command Center - Real-time Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        .header h1 {
+            color: #00d4ff;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00d4ff;
+        }
+
+        .sovereign-badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .metric-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-title {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .metric-title::before {
+            content: '📊';
+            margin-right: 10px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .metric-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-healthy { background: #27ae60; color: white; }
+        .status-warning { background: #f39c12; color: white; }
+        .status-critical { background: #e74c3c; color: white; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            transition: width 0.3s ease;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .service-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+
+        .service-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .service-status {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .service-status.running { background: #27ae60; color: white; }
+        .service-status.stopped { background: #e74c3c; color: white; }
+        .service-status.unknown { background: #f39c12; color: white; }
+
+        .alerts-panel {
+            grid-column: 1 / -1;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .alerts-title {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .alert-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            border: 1px solid #333;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="sovereign-badge">🔒 Maximum Sovereign Power: 13/13</div>
+        <h1>Dominion OS Command Center</h1>
+        <p>Real-time Sovereign Infrastructure Monitoring</p>
+    </header>
+
+    <div class="refresh-indicator">
+        Last updated: <span id="last-update">Loading...</span>
+    </div>
+
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-title">Sovereign Health Score</div>
+            <div class="metric-value" id="health-score">95</div>
+            <div class="metric-status status-healthy">EXCELLENT</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 95%"></div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-title">System Uptime</div>
+            <div class="metric-value" id="uptime">99.9%</div>
+            <div class="metric-status status-healthy">HEALTHY</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.9%"></div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-title">Response Time</div>
+            <div class="metric-value" id="response-time">45ms</div>
+            <div class="metric-status status-healthy">FAST</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 90%"></div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-title">Active Services</div>
+            <div class="service-grid" id="services-grid">
+                <div class="service-item">
+                    <div class="service-name">MCP Server</div>
+                    <div class="service-status running">RUNNING</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">Sovereign AI</div>
+                    <div class="service-status running">RUNNING</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">Monitoring</div>
+                    <div class="service-status running">RUNNING</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-name">Command Center</div>
+                    <div class="service-status running">RUNNING</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-title">Resource Usage</div>
+            <div style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>CPU</span>
+                    <span id="cpu-usage">23%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 23%"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin: 10px 0 5px 0;">
+                    <span>Memory</span>
+                    <span id="memory-usage">67%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 67%"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin: 10px 0 5px 0;">
+                    <span>Disk</span>
+                    <span id="disk-usage">45%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-title">AI Improvement Status</div>
+            <div style="margin-top: 15px;">
+                <div>Last Scan: <span id="last-scan">2 minutes ago</span></div>
+                <div>Quality Score: <span id="quality-score">92/100</span></div>
+                <div>Security Score: <span id="security-score">95/100</span></div>
+                <div>Optimization Applied: <span id="optimizations">12</span></div>
+            </div>
+        </div>
+
+        <div class="alerts-panel">
+            <div class="alerts-title">⚠️ Active Alerts</div>
+            <div id="alerts-container">
+                <div class="alert-item">
+                    <strong>INFO:</strong> All systems operating normally
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Real-time monitoring simulation
+        function updateMetrics() {
+            const now = new Date();
+            document.getElementById('last-update').textContent = now.toLocaleTimeString();
+
+            // Simulate real-time data updates
+            const healthScore = Math.floor(Math.random() * 5) + 95; // 95-100
+            document.getElementById('health-score').textContent = healthScore;
+            document.querySelector('#health-score').nextElementSibling.nextElementSibling.firstElementChild.style.width = healthScore + '%';
+
+            const cpuUsage = Math.floor(Math.random() * 30) + 20; // 20-50%
+            document.getElementById('cpu-usage').textContent = cpuUsage + '%';
+            document.getElementById('cpu-usage').closest('.metric-card').querySelectorAll('.progress-fill')[0].style.width = cpuUsage + '%';
+
+            const memoryUsage = Math.floor(Math.random() * 20) + 60; // 60-80%
+            document.getElementById('memory-usage').textContent = memoryUsage + '%';
+            document.getElementById('memory-usage').closest('.metric-card').querySelectorAll('.progress-fill')[1].style.width = memoryUsage + '%';
+
+            const diskUsage = Math.floor(Math.random() * 20) + 40; // 40-60%
+            document.getElementById('disk-usage').textContent = diskUsage + '%';
+            document.getElementById('disk-usage').closest('.metric-card').querySelectorAll('.progress-fill')[2].style.width = diskUsage + '%';
+
+            // Update AI metrics
+            const qualityScore = Math.floor(Math.random() * 5) + 90; // 90-95
+            document.getElementById('quality-score').textContent = qualityScore + '/100';
+
+            const securityScore = Math.floor(Math.random() * 3) + 95; // 95-98
+            document.getElementById('security-score').textContent = securityScore + '/100';
+        }
+
+        // Update metrics every 5 seconds
+        setInterval(updateMetrics, 5000);
+
+        // Initial update
+        updateMetrics();
+
+        // Simulate service status updates
+        setInterval(() => {
+            const services = document.querySelectorAll('.service-status');
+            services.forEach(service => {
+                // 95% chance of staying running
+                if (Math.random() > 0.95) {
+                    service.className = 'service-status stopped';
+                    service.textContent = 'STOPPED';
+
+                    // Add alert
+                    const alertContainer = document.getElementById('alerts-container');
+                    const alert = document.createElement('div');
+                    alert.className = 'alert-item';
+                    alert.innerHTML = '<strong>CRITICAL:</strong> Service ' + service.previousElementSibling.textContent + ' stopped unexpectedly';
+                    alertContainer.appendChild(alert);
+                }
+            });
+        }, 30000);
+    </script>
+</body>
+</html>

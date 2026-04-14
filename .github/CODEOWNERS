@@ -1,11 +1,1 @@
-# CODEOWNERS for dominion-os-demo-build
-* @Fractal5-Solutions/codeowners
-
-docs/ @Fractal5-Solutions/codeowners
-tools/ @Fractal5-Solutions/codeowners
-tests/ @Fractal5-Solutions/codeowners
-web/ @Fractal5-Solutions/codeowners
-scripts/ @Fractal5-Solutions/codeowners
-
-# Replace with real team/user handlesweb/terrain-viewer/**  @Fractal5-Solutions/maintainers
-.github/workflows/proof-html.yml  @Fractal5-Solutions/secops @Fractal5-Solutions/maintainers
+* @Fractal5-X

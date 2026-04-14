@@ -1,0 +1,101 @@
+{
+  "name": "Dominion OS Demo Build",
+  "description": "Fractal5 Solutions - Dominion OS sovereign AI demonstration platform",
+  "projectId": "dominion-core-prod",
+  "region": "us-central1",
+  "service": "dominion-demo-service",
+
+  "build": {
+    "tool": "skaffold",
+    "config": "skaffold.yaml",
+    "cacheFrom": ["gcr.io/dominion-core-prod/dominion-demo:latest"],
+    "buildArgs": {
+      "BUILDKIT_INLINE_CACHE": "1"
+    }
+  },
+
+  "deploy": {
+    "target": "cloudrun",
+    "automaticSync": true,
+    "watchMode": true,
+    "cleanupAfterStop": false,
+    "statusCheck": true,
+    "statusCheckDeadlineSeconds": 600,
+    "kubeContext": "gke_dominion-core-prod_us-central1_dominion-cluster"
+  },
+
+  "debug": {
+    "enabled": true,
+    "portForward": [
+      {
+        "localPort": 8080,
+        "remotePort": 8080,
+        "name": "http-server"
+      },
+      {
+        "localPort": 5678,
+        "remotePort": 5678,
+        "name": "python-debugger"
+      }
+    ]
+  },
+
+  "environment": {
+    "development": {
+      "profile": "dev",
+      "autoApply": true,
+      "sync": {
+        "manual": [
+          {
+            "src": "**/*.py",
+            "dest": "/app"
+          },
+          {
+            "src": "**/*.yaml",
+            "dest": "/app"
+          },
+          {
+            "src": "**/*.json",
+            "dest": "/app"
+          }
+        ]
+      }
+    },
+    "production": {
+      "profile": "prod",
+      "requireExplicitDeploy": true,
+      "verify": true
+    },
+    "local": {
+      "profile": "local",
+      "autoApply": false
+    }
+  },
+
+  "monitoring": {
+    "enableLogs": true,
+    "enableMetrics": true,
+    "logLevel": "INFO",
+    "streamLogs": true,
+    "logSince": "5m"
+  },
+
+  "security": {
+    "enableVulnerabilityScanning": true,
+    "enableBinaryAuthorization": false,
+    "requireServiceAccount": false
+  },
+
+  "optimization": {
+    "parallelBuilds": true,
+    "caching": true,
+    "layerCaching": true,
+    "buildConcurrency": 0
+  },
+
+  "notifications": {
+    "onSuccess": false,
+    "onFailure": true,
+    "onWarning": false
+  }
+}

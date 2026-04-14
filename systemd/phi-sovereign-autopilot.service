@@ -1,0 +1,58 @@
+[Unit]
+Description=PHI Sovereign Autopilot NHITL - Autonomous Operation Mode
+Documentation=https://github.com/Fractal5-Solutions/dominion-os-demo-build/blob/main/SOVEREIGN_AUTOPILOT_GUIDE.md
+After=network.target docker.service
+Requires=docker.service
+PartOf=phi-enterprise-stack.target
+
+[Service]
+Type=simple
+User=dominion
+Group=docker
+WorkingDirectory=/opt/dominion-os-demo-build
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="MONITOR_INTERVAL=30"
+Environment="RECOVERY_ATTEMPTS=3"
+Environment="OPTIMIZATION_THRESHOLD=75"
+Environment="CRITICAL_THRESHOLD=60"
+
+# Main execution
+ExecStart=/opt/dominion-os-demo-build/phi_sovereign_autopilot_nhitl.sh monitor
+
+# Restart configuration
+Restart=always
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryLimit=2G
+CPUQuota=200%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phi-sovereign-autopilot
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/dominion-os-demo-build/telemetry /opt/dominion-os-demo-build/logs /var/log
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=phi-enterprise-stack.target
+
+# Installation Instructions:
+# 1. Copy this file: sudo cp systemd/phi-sovereign-autopilot.service /etc/systemd/system/
+# 2. Update WorkingDirectory to match your installation path
+# 3. Set correct User (replace %i with actual username)
+# 4. Reload systemd: sudo systemctl daemon-reload
+# 5. Enable service: sudo systemctl enable phi-sovereign-autopilot
+# 6. Start service: sudo systemctl start phi-sovereign-autopilot
+# 7. Check status: sudo systemctl status phi-sovereign-autopilot
+# 8. View logs: sudo journalctl -u phi-sovereign-autopilot -f

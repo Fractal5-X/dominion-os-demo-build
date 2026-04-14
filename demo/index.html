@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal5 Demo | Gated Operator Experience</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --panel: #f5f5f5;
+            --panel-strong: #ffffff;
+            --text: #000000;
+            --muted: #797979;
+            --soft: #f5f5f5;
+            --line: #d9d9d9;
+            --accent: #000000;
+            --accent-2: #797979;
+            --danger: #797979;
+            --shadow: 0 24px 60px #d9d9d9;
+        }
+
+        * { box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 10%, #d9d9d9 0, transparent 24%),
+                radial-gradient(circle at 85% 0%, #f5f5f5 0, transparent 22%),
+                linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+            font-family: "Manrope", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(#d9d9d9 1px, transparent 1px),
+                linear-gradient(90deg, #d9d9d9 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(180deg, #000000 0%, transparent 90%);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        code, pre {
+            font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 28px 20px 72px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 22px;
+            padding: clamp(26px, 5vw, 52px);
+            border: 1px solid var(--line);
+            border-radius: 34px;
+            background:
+                linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%),
+                var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            color: #ffffff;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.76rem;
+        }
+
+        .hero-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.9rem, 6.8vw, 6.2rem);
+            line-height: 0.92;
+            letter-spacing: -0.05em;
+            max-width: 11ch;
+        }
+
+        .hero-copy {
+            margin: 0;
+            max-width: 68ch;
+            color: var(--muted);
+            font-size: 1.06rem;
+            line-height: 1.7;
+        }
+
+        .hero-actions,
+        .section-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 18px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text);
+            border-color: var(--line);
+        }
+
+        .hero-aside {
+            display: grid;
+            gap: 14px;
+        }
+
+        .signal {
+            padding: 18px;
+            border-radius: 22px;
+            background: var(--panel-strong);
+            border: 1px solid var(--line);
+        }
+
+        .signal strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .signal .value {
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .signal .muted {
+            color: var(--muted);
+        }
+
+        .status-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 4px #d9d9d9;
+        }
+
+        .section {
+            margin-top: 24px;
+            padding: 26px;
+            border-radius: 28px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .section h2 {
+            margin: 0;
+            font-size: clamp(1.4rem, 2.4vw, 2rem);
+            letter-spacing: -0.03em;
+        }
+
+        .section-copy {
+            margin: 8px 0 0;
+            max-width: 68ch;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .grid-3,
+        .grid-2,
+        .grid-4 {
+            display: grid;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            border-radius: 22px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            box-shadow: 0 14px 30px #d9d9d9;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1.03rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .metric {
+            display: grid;
+            gap: 6px;
+        }
+
+        .metric .label {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.76rem;
+        }
+
+        .metric .value {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .metric .sub {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .data-list {
+            display: grid;
+            gap: 8px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .data-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--line);
+        }
+
+        .data-list li:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .status-chip {
+            display: inline-flex;
+            width: fit-content;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            font-size: 0.82rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .status-green {
+            color: var(--text);
+            background: #ffffff;
+        }
+
+        .status-amber {
+            color: var(--text);
+            background: #ffffff;
+        }
+
+        .status-red {
+            color: var(--muted);
+            background: #ffffff;
+        }
+
+        pre {
+            margin: 0;
+            padding: 16px;
+            overflow: auto;
+            border-radius: 18px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .mini-note {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .divider {
+            height: 1px;
+            margin: 14px 0;
+            background: var(--line);
+        }
+
+        .footer {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            text-align: center;
+        }
+
+        .skeleton {
+            min-height: 118px;
+            border-radius: 20px;
+            background:
+                linear-gradient(110deg, #f5f5f5, #d9d9d9, #f5f5f5);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s linear infinite;
+            border: 1px solid var(--line);
+        }
+
+        @keyframes shimmer {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        @media (max-width: 980px) {
+            .hero-layout,
+            .grid-4,
+            .grid-3,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            main {
+                padding-inline: 14px;
+            }
+
+            .hero,
+            .section {
+                border-radius: 22px;
+                padding: 20px;
+            }
+
+            h1 {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main data-contract="demo-shell" data-route="/demo">
+        <section class="hero">
+            <div class="hero-layout">
+                <div>
+                    <span class="eyebrow">Gated /demo</span>
+                    <h1>Fractal5 demo surface, built for real users.</h1>
+                    <p class="hero-copy">
+                        This is the public entry point behind Cloud Run and IAP.
+                        It shows the live demo contract, operational state, and the
+                        code-backed surfaces people can actually click: overview,
+                        store, health, and topology.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" id="open-command-center" href="#live-state">Review live state</a>
+                        <a class="btn btn-secondary" href="/store">Open store</a>
+                        <a class="btn btn-secondary" href="/status">View JSON status</a>
+                    </div>
+                </div>
+
+                <div class="hero-aside">
+                    <div class="signal">
+                        <strong>Access pattern</strong>
+                        <div class="value">Users enter through the LB, pass IAP, and land on this demo page.</div>
+                    </div>
+                    <div class="signal">
+                        <strong>Current contract</strong>
+                        <div class="value"><span class="muted">Primary route:</span> <code>/demo</code></div>
+                    </div>
+                    <div class="signal">
+                        <strong>Operator note</strong>
+                        <div class="value">If the page is healthy, the deployment is usually healthy too.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-pills">
+                <span class="pill"><span class="dot"></span> Cloud Run ready</span>
+                <span class="pill"><span class="dot"></span> IAP gated</span>
+                <span class="pill"><span class="dot"></span> Mobile responsive</span>
+                <span class="pill"><span class="dot"></span> Audit-friendly</span>
+            </div>
+        </section>
+
+        <section class="section" id="live-state">
+            <div class="section-head">
+                <div>
+                    <h2>Live state</h2>
+                    <p class="section-copy">
+                        These cards are hydrated from the app's demo and topology APIs.
+                        If they are blank, the shell still renders and surfaces the fault.
+                    </p>
+                </div>
+                <div class="section-actions">
+                    <a class="btn btn-secondary" href="#code">Jump to code</a>
+                    <a class="btn btn-secondary" href="#playbook">What users do</a>
+                </div>
+            </div>
+
+            <div class="grid-4" id="metric-grid">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+
+            <div class="grid-3" id="service-grid" style="margin-top: 16px;">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </section>
+
+        <section class="section" id="playbook">
+            <div class="section-head">
+                <div>
+                    <h2>User playbook</h2>
+                    <p class="section-copy">
+                        This page gives users a simple path: inspect the demo, open the store,
+                        check health, and review the live topology without needing the console.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <article class="card">
+                    <span class="status-chip status-green">Step 1</span>
+                    <h3>Open the demo</h3>
+                    <p>Use <code>/demo</code> to enter the gated experience and verify the user-facing shell loads cleanly.</p>
+                </article>
+                <article class="card">
+                    <span class="status-chip status-green">Step 2</span>
+                    <h3>Review the store</h3>
+                    <p>Use <code>/store</code> to inspect the product catalog and confirm the public commerce surface is reachable.</p>
+                </article>
+                <article class="card">
+                    <span class="status-chip status-green">Step 3</span>
+                    <h3>Check health</h3>
+                    <p>Use <code>/health</code>, <code>/ready</code>, or <code>/healthz</code> when you need a fast operator-grade signal.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" id="demo-details">
+            <div class="section-head">
+                <div>
+                    <h2>Demo commitments</h2>
+                    <p class="section-copy">
+                        The runtime contract comes from checked-in JSON so the page stays synchronized
+                        with the repo's actual claims.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-3" id="commitment-grid">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </section>
+
+        <section class="section" id="code">
+            <div class="section-head">
+                <div>
+                    <h2>Code for users</h2>
+                    <p class="section-copy">
+                        Small, copyable examples for calling the demo and its health endpoints.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Fetch the page</h3>
+                    <pre><code>curl -I https://www.fractal5solutions.com/demo</code></pre>
+                    <p class="mini-note">Expect IAP protection on the public path and a normal response for authorized users.</p>
+                </article>
+                <article class="card">
+                    <h3>Fetch health</h3>
+                    <pre><code>curl -s https://www.fractal5solutions.com/demo/healthz | jq .</code></pre>
+                    <p class="mini-note">Use this to confirm the service revision is healthy after deploy.</p>
+                </article>
+            </div>
+
+            <div class="divider"></div>
+
+            <article class="card">
+                <div class="toolbar">
+                    <h3>Browser snippet</h3>
+                    <span class="status-chip status-amber">for integration tests</span>
+                </div>
+                <pre><code>const res = await fetch("/api/demo/experience");
+const payload = await res.json();
+console.log(payload.config.version, payload.pages.demo);</code></pre>
+            </article>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <h2>Remote inventory</h2>
+                    <p class="section-copy">
+                        The app still exposes telemetry-defined inventories for the two canonical projects,
+                        but the page only claims what the APIs can show.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-2" id="remote-grid">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </section>
+
+        <div class="footer">
+            Built for Fractal5 Solutions · route <code>/demo</code> · backed by Cloud Run + IAP + Artifact Registry
+        </div>
+    </main>
+
+    <script>
+        const serviceGrid = document.getElementById("service-grid");
+        const metricGrid = document.getElementById("metric-grid");
+        const commitmentGrid = document.getElementById("commitment-grid");
+        const remoteGrid = document.getElementById("remote-grid");
+
+        function titleize(key) {
+            return key.replace(/_/g, " ").replace(/\b\w/g, (match) => match.toUpperCase());
+        }
+
+        function createCard(title, body, meta = "") {
+            return `
+                <article class="card">
+                    <h3>${title}</h3>
+                    <div>${body}</div>
+                    ${meta ? `<p class="mini-note">${meta}</p>` : ""}
+                </article>
+            `;
+        }
+
+        function statusClass(healthy) {
+            return healthy ? "status-chip status-green" : "status-chip status-red";
+        }
+
+        function renderMetrics(info, demoConfig) {
+            const cards = [
+                { label: "Service", value: info.service || "n/a", sub: info.release_repo || "release repo unavailable" },
+                { label: "Version", value: demoConfig.version || info.version || "n/a", sub: demoConfig.optimization_level || "unspecified" },
+                { label: "Region", value: info.region || "n/a", sub: info.project_id ? `Project ${info.project_id}` : "project unavailable" },
+                { label: "Routes", value: Object.keys(info.routes || {}).length || 0, sub: "demo, store, health, status" }
+            ];
+
+            metricGrid.innerHTML = cards.map((card) => `
+                <article class="card metric">
+                    <span class="label">${card.label}</span>
+                    <span class="value">${card.value}</span>
+                    <span class="sub">${card.sub}</span>
+                </article>
+            `).join("");
+        }
+
+        function renderServices(services) {
+            serviceGrid.innerHTML = services.map((service) => {
+                const probe = service.probe || {};
+                const rows = [
+                    ["Role", titleize(service.role || "unknown")],
+                    ["Port", service.port ?? "n/a"],
+                    ["URL", `<a href="${service.url}" target="_blank" rel="noreferrer">${service.url}</a>`],
+                    ["Check", probe.checked_url ? `<code>${probe.checked_url}</code>` : "not probed"]
+                ].map(([label, value]) => `<li><span class="muted">${label}</span><span>${value}</span></li>`).join("");
+
+                const healthy = Boolean(probe.healthy);
+                const label = probe.status ? probe.status.replace(/_/g, " ") : "unknown";
+
+                return createCard(
+                    service.name,
+                    `<span class="${statusClass(healthy)}">${label}</span><ul class="data-list">${rows}</ul>`,
+                    probe.status_code ? `HTTP ${probe.status_code}` : (probe.error || "no probe response")
+                );
+            }).join("");
+        }
+
+        function renderCommitments(demo) {
+            const targets = demo.performance_targets || {};
+            const accessibility = demo.accessibility || {};
+            const features = demo.features || {};
+
+            commitmentGrid.innerHTML = [
+                createCard(
+                    "Performance budget",
+                    `<ul class="data-list">${Object.entries(targets).map(([key, value]) => `<li><span class="muted">${titleize(key)}</span><span>${value}</span></li>`).join("")}</ul>`,
+                    "Measured against the repo's checked-in targets"
+                ),
+                createCard(
+                    "Accessibility",
+                    `<ul class="data-list">${Object.entries(accessibility).map(([key, value]) => `<li><span class="muted">${titleize(key)}</span><span>${value}</span></li>`).join("")}</ul>`,
+                    "The page should work with keyboard and screen readers"
+                ),
+                createCard(
+                    "Feature set",
+                    `<ul class="data-list">${Object.entries(features).map(([key, value]) => `<li><span class="muted">${titleize(key)}</span><span>${value ? "enabled" : "disabled"}</span></li>`).join("")}</ul>`,
+                    "Only features claimed by the config are presented"
+                )
+            ].join("");
+        }
+
+        function renderRemoteProjects(projects) {
+            remoteGrid.innerHTML = Object.entries(projects).map(([projectId, payload]) => {
+                const services = (payload.services || []).slice(0, 4).map((service) => `
+                    <li>
+                        <span class="muted">${service.name}</span>
+                        <span><a href="${service.url}" target="_blank" rel="noreferrer">open</a></span>
+                    </li>
+                `).join("");
+
+                return createCard(
+                    projectId,
+                    `<span class="status-chip status-amber">${payload.count || 0} services mapped</span><ul class="data-list">${services}</ul>`,
+                    payload.count > 4 ? `Showing first 4 of ${payload.count}` : `${payload.count || 0} total`
+                );
+            }).join("");
+        }
+
+        async function boot() {
+            const [demoResponse, topologyResponse] = await Promise.all([
+                fetch("/api/demo/experience"),
+                fetch("/api/v1/topology")
+            ]);
+
+            const demoPayload = await demoResponse.json();
+            const topologyPayload = await topologyResponse.json();
+            const demo = demoPayload.config || {};
+            const info = {
+                service: topologyPayload?.local_services?.[0]?.name ? "Fractal5 Demo" : "Fractal5 Demo",
+                version: demo.version,
+                region: "us-central1",
+                project_id: "732190342674",
+                release_repo: "dominion-os-demo-build",
+                routes: {
+                    demo: "/demo",
+                    store: "/store",
+                    health: "/health",
+                    healthz: "/healthz",
+                    status: "/status"
+                }
+            };
+
+            renderMetrics(info, demo);
+            renderServices(topologyPayload.local_services || []);
+            renderCommitments(demo);
+            renderRemoteProjects(topologyPayload.remote_projects || {});
+
+            const commandCenter = (topologyPayload.local_services || []).find((service) => service.id === "command-center-bims");
+            if (commandCenter) {
+                document.getElementById("open-command-center").href = commandCenter.url;
+            }
+        }
+
+        boot().catch((error) => {
+            const fallback = createCard(
+                "Demo surface unavailable",
+                `<p>The demo API could not be loaded.</p><p class="mini-note">${error.message}</p>`,
+                "fallback shell rendered"
+            );
+            metricGrid.innerHTML = fallback;
+            serviceGrid.innerHTML = fallback;
+            commitmentGrid.innerHTML = fallback;
+            remoteGrid.innerHTML = fallback;
+        });
+    </script>
+</body>
+</html>

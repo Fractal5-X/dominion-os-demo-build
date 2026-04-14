@@ -1,0 +1,43 @@
+[Unit]
+Description=PHI Daily Live Ops Health Check
+Documentation=https://github.com/Fractal5-Solutions/dominion-os-demo-build/blob/main/SOVEREIGN_AUTOPILOT_GUIDE.md
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=dominion
+Group=docker
+WorkingDirectory=/opt/dominion-os-demo-build
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="THRESHOLD=85"
+Environment="ALERT_EMAIL=ops@fractal5solutions.com"
+
+# Main execution
+ExecStart=/opt/dominion-os-demo-build/scripts/daily_live_ops_check.sh
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phi-daily-check
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/dominion-os-demo-build/telemetry /var/log
+
+[Install]
+WantedBy=multi-user.target
+
+# Installation Instructions:
+# 1. Copy this file: sudo cp systemd/phi-daily-monitoring.service /etc/systemd/system/
+# 2. Copy timer file: sudo cp systemd/phi-daily-monitoring.timer /etc/systemd/system/
+# 3. Update WorkingDirectory to match your installation path
+# 4. Set correct User (replace %i with actual username)
+# 5. Reload systemd: sudo systemctl daemon-reload
+# 6. Enable timer: sudo systemctl enable phi-daily-monitoring.timer
+# 7. Start timer: sudo systemctl start phi-daily-monitoring.timer
+# 8. Check timer status: sudo systemctl list-timers phi-daily-monitoring.timer
+# 9. View logs: sudo journalctl -u phi-daily-monitoring -f

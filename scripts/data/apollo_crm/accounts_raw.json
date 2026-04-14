@@ -1,0 +1,55 @@
+{
+  "organizations": [
+    {
+      "id": "demo_company_001",
+      "name": "TechCorp Solutions",
+      "primary_domain": "techcorp.com",
+      "account_score": 85,
+      "industry": "Software Development",
+      "employee_count": 150,
+      "revenue_range": "$10M-$50M",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "United States",
+      "linkedin_url": "https://linkedin.com/company/techcorp",
+      "twitter_url": "https://twitter.com/techcorp",
+      "facebook_url": "https://facebook.com/techcorp",
+      "phone": "+1-415-555-0123",
+      "founded_year": 2015,
+      "short_description": "Leading software development company specializing in AI and cloud solutions."
+    },
+    {
+      "id": "demo_company_002",
+      "name": "DataFlow Systems",
+      "primary_domain": "dataflow.io",
+      "account_score": 92,
+      "industry": "Data Analytics",
+      "employee_count": 75,
+      "revenue_range": "$5M-$10M",
+      "city": "Austin",
+      "state": "TX",
+      "country": "United States",
+      "linkedin_url": "https://linkedin.com/company/dataflow",
+      "phone": "+1-512-555-0456",
+      "founded_year": 2018,
+      "short_description": "Advanced data analytics and business intelligence platform."
+    },
+    {
+      "id": "demo_company_003",
+      "name": "CloudTech Innovations",
+      "primary_domain": "cloudtech.dev",
+      "account_score": 78,
+      "industry": "Cloud Computing",
+      "employee_count": 200,
+      "revenue_range": "$50M-$100M",
+      "city": "Seattle",
+      "state": "WA",
+      "country": "United States",
+      "linkedin_url": "https://linkedin.com/company/cloudtech",
+      "twitter_url": "https://twitter.com/cloudtech",
+      "phone": "+1-206-555-0789",
+      "founded_year": 2012,
+      "short_description": "Enterprise cloud solutions and infrastructure management."
+    }
+  ]
+}

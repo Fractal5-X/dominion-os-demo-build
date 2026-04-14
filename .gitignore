@@ -1,14 +1,59 @@
+# Environment files with secrets
+.env.mcp
+.env
+*.env.local
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
 __pycache__/
 *.pyc
-.pytest_cache/
-.venv/
-dist/
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
 .DS_Store
+Thumbs.db
 
-# Ignore local backup archives
-out/backups/
-image-digest.txt
-out/autopilot/
+# Log files
+*.log
+scripts/logs/*.log
+scripts/logs/*.pid
+scripts/telemetry/*.log
 
-# Local environment files
-.env
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.tmp/
+temp/
+
+# Docker volumes (local data)
+docker-volumes/
+*.pid
+scripts/telemetry/*.json
+
+# Public demo governance
+# Keep thread-specific activation artifacts and contact dumps out of commits.
+reports/erica_activation_status_*.json
+reports/erica_activation_status_*.md
+reports/erica_outbound_package_*.md
+data/gmail_contacts/*.bak.*
+
+# Runtime-mutating live ops markers and rate-limit trackers
+scripts/data/*_rate_limit
+scripts/telemetry/.last_alert_check
+scripts/telemetry/.last_intelligent_sync
+scripts/telemetry/.next_intelligent_sync
+scripts/telemetry/.last_maintenance
+scripts/telemetry/.last_emergency_restart

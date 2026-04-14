@@ -1,0 +1,4 @@
+sku,name,family,manifest_status,known_runtime,ci_build_status,ci_sbom_status,ci_vuln_scan_status,ci_image_sign_status,ci_image_push_status,ci_manifest_seal_status,ci_cloud_run_deploy_status,ci_gateway_deploy_status,ci_smoke_test_status,runtime_verified_at,runtime_verified_by,runtime_verification_notes
+DOM-CC-001,Dominion Cloud Computer,dominion-cloud-computer,listed_in_manifest,multi-cloud,,,,,,,,,,,,
+DOM-OS-DESKTOP-001,Dominion OS 1.0 - Desktop PC,dominion-os,listed_in_manifest,desktop,,,,,,,,,,,,
+DOM-OS-GCLOUD-001,Dominion OS 1.0 - Google Cloud,dominion-os,listed_in_manifest,gcp,,,,,,,,,,,,

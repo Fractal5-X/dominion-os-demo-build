@@ -1,0 +1,197 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "PHI Sovereign OS - Demo Build"
+    },
+    {
+      "path": "./scripts",
+      "name": "Scripts & Automation"
+    }
+  ],
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "/bin/bash",
+        "icon": "terminal-bash"
+      }
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/scripts/.venv/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "100"],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "editor.rulers": [100, 120],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true,
+      "**/telemetry/*.json": false,
+      "**/logs/**": false
+    },
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/__pycache__/**": true,
+      "**/.venv/**": true,
+      "**/telemetry/**": true,
+      "**/logs/**": true
+    },
+    "files.associations": {
+      "*.sh": "shellscript",
+      "*.yml": "yaml",
+      "*.yaml": "yaml",
+      "Dockerfile*": "dockerfile",
+      "docker-compose*.yml": "yaml"
+    },
+    "shellcheck.enable": true,
+    "shellcheck.run": "onSave",
+    "shellformat.flag": "-i 2 -ci",
+    "yaml.schemas": {
+      "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+      "https://json.schemastore.org/docker-compose.json": "docker-compose*.yml"
+    },
+    "docker.dockerPath": "/usr/bin/docker",
+    "docker.dockerComposePath": "/usr/bin/docker-compose",
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "git.postCommitCommand": "none",
+    "gitlens.defaultDateFormat": "YYYY-MM-DD HH:mm:ss",
+    "gitlens.hovers.currentLine.over": "line",
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/.venv": true,
+      "**/telemetry": true,
+      "**/logs": true,
+      "**/__pycache__": true
+    },
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "workbench.colorTheme": "Default Dark+",
+    "workbench.iconTheme": "vs-minimal"
+  },
+  "extensions": {
+    "recommendations": [
+      "github.copilot",
+      "github.copilot-chat",
+      "github.vscode-pull-request-github",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-azuretools.vscode-docker",
+      "timonwong.shellcheck",
+      "foxundermoon.shell-format",
+      "redhat.vscode-yaml",
+      "eamodio.gitlens",
+      "ms-vsliveshare.vsliveshare",
+      "ms-vscode.makefile-tools"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Dominion Command Core",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/command_core.py",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PORT": "5002"
+        },
+        "justMyCode": false
+      },
+      {
+        "name": "Python: Current File",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "justMyCode": false
+      },
+      {
+        "name": "Bash: Debug Script",
+        "type": "bashdb",
+        "request": "launch",
+        "program": "${file}",
+        "cwd": "${workspaceFolder}",
+        "internalConsoleOptions": "openOnSessionStart"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Deploy MCP Full",
+        "type": "shell",
+        "command": "./scripts/deploy_mcp_full.sh",
+        "problemMatcher": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "PHI Live Ops: Start",
+        "type": "shell",
+        "command": "bash /workspaces/dominion-command-center/scripts/live_ops_start.sh",
+        "problemMatcher": [],
+        "runOptions": {
+          "runOn": "folderOpen"
+        }
+      },
+      {
+        "label": "PHI Live Ops: Verify",
+        "type": "shell",
+        "command": "bash /workspaces/dominion-command-center/scripts/live_ops_verify.sh",
+        "problemMatcher": []
+      },
+      {
+        "label": "Sovereign Autopilot: Status",
+        "type": "shell",
+        "command": "./phi_sovereign_autopilot_nhitl.sh status",
+        "problemMatcher": []
+      },
+      {
+        "label": "Sovereign Autopilot: Monitor",
+        "type": "shell",
+        "command": "./phi_sovereign_autopilot_nhitl.sh monitor",
+        "problemMatcher": [],
+        "isBackground": true
+      },
+      {
+        "label": "MCP: Start Services",
+        "type": "shell",
+        "command": "./scripts/mcp_manage.sh start",
+        "problemMatcher": []
+      },
+      {
+        "label": "MCP: Stop Services",
+        "type": "shell",
+        "command": "./scripts/mcp_manage.sh stop",
+        "problemMatcher": []
+      },
+      {
+        "label": "Git: Push All",
+        "type": "shell",
+        "command": "git add . && git commit -m 'chore: update' && git push",
+        "problemMatcher": []
+      }
+    ]
+  }
+}

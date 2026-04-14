@@ -1,0 +1,35 @@
+[
+  {
+    "id": "file_001",
+    "name": "Project_Plan_v2.xlsx",
+    "path": "/Projects/TechCorp/Project_Plan_v2.xlsx",
+    "size": 1572864,
+    "server_modified": "2024-02-20T10:15:00Z",
+    "client_modified": "2024-02-20T10:15:00Z",
+    "rev": "a1b2c3d4",
+    "content_hash": "abc123def456",
+    "shared_with": ["john.doe@techcorp.com"]
+  },
+  {
+    "id": "file_002",
+    "name": "Data_Analysis_Report.pdf",
+    "path": "/Reports/Q1/Data_Analysis_Report.pdf",
+    "size": 3145728,
+    "server_modified": "2024-02-25T14:30:00Z",
+    "client_modified": "2024-02-25T14:30:00Z",
+    "rev": "e5f6g7h8",
+    "content_hash": "def456ghi789",
+    "shared_with": ["sarah.smith@dataflow.io", "mike.johnson@cloudtech.dev"]
+  },
+  {
+    "id": "file_003",
+    "name": "Meeting_Notes.txt",
+    "path": "/Meetings/2024-03-01/Meeting_Notes.txt",
+    "size": 16384,
+    "server_modified": "2024-03-01T16:00:00Z",
+    "client_modified": "2024-03-01T16:00:00Z",
+    "rev": "i9j0k1l2",
+    "content_hash": "ghi789jkl012",
+    "shared_with": ["jane.wilson@techstartup.net"]
+  }
+]

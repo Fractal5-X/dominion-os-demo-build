@@ -1,0 +1,391 @@
+{
+  "generated_at": "2026-03-19T13:15:31Z",
+  "tenant": "fractal5",
+  "overlay": "business",
+  "grok_gateway_url": "http://127.0.0.1:8082/chat",
+  "phi_mcp_url": "http://127.0.0.1:8000/mcp",
+  "doctor": {
+    "details": {
+      "checks": [
+        {
+          "info": "200",
+          "name": "Phi MCP initialize",
+          "ok": true,
+          "type": "mcp_init",
+          "url": "http://127.0.0.1:8000/mcp"
+        },
+        {
+          "info": "200",
+          "name": "LLM gateway /health",
+          "ok": true,
+          "type": "http_get",
+          "url": "http://localhost:8082/health"
+        }
+      ],
+      "duration_ms": 2002,
+      "timestamp_utc": "2026-03-19T13:15:21Z"
+    },
+    "ok": true,
+    "redactions_applied": true,
+    "summary": "All health checks passing"
+  },
+  "political_stack": {
+    "details": {
+      "generated_at": "2026-03-19T13:15:24Z",
+      "grok_gateway": {
+        "effective_chat_url": "http://127.0.0.1:8082/chat",
+        "effective_health_url": "http://127.0.0.1:8082/health",
+        "requested": "http://127.0.0.1:8082/chat",
+        "warning": null
+      },
+      "harvest": {
+        "skipped": true
+      },
+      "liveops": {
+        "alerts_webhook": {
+          "detail": "200",
+          "ok": true,
+          "url": "http://127.0.0.1:9009/health"
+        },
+        "dominion_web": {
+          "detail": "200",
+          "ok": true,
+          "url": "http://127.0.0.1:8080"
+        },
+        "llm_gateway_health": {
+          "detail": "200",
+          "ok": true,
+          "url": "http://127.0.0.1:8082/health"
+        },
+        "phi_mcp": {
+          "detail": "200",
+          "ok": true,
+          "url": "http://127.0.0.1:8000/mcp"
+        }
+      },
+      "ok": true,
+      "output_dir": "D:\\phi-ops\\out",
+      "phi_chief": {
+        "detail": "status refreshed",
+        "ok": true,
+        "payload": {
+          "overall": "degraded",
+          "repo": {
+            "branch": "codex/liveops-hardening-20260317",
+            "branch_status": "## codex/liveops-hardening-20260317...origin/codex/liveops-hardening-20260317\n M phi_monitoring_dashboard.py\n?? RUNBOOK_DISASTER_RECOVERY.md\n?? RUNBOOK_INCIDENT_RESPONSE.md\n?? RUNBOOK_SCALING_OPERATIONS.md\n?? config/situation_room_overlay_canada.json\n?? docs/SITUATION_WAR_ROOM_DASHBOARD_PLAN.md\n?? phi_slo_monitoring.sh\n?? phi_sovereign_keepalive.sh\n?? phi_sovereign_status.sh",
+            "canonical_root": "D:\\phi-ops\\github\\dominion-command-center",
+            "dirty_count": 17,
+            "last_commit": {
+              "authored_at": "2026-03-17T14:46:20-07:00",
+              "sha": "13312097fcc8c0292e4e946799cd83d75eeb52bd",
+              "subject": "Add product-line alignment receipt for first five repos"
+            },
+            "remote": "https://github.com/Fractal5-Solutions/dominion-command-center.git"
+          },
+          "required_repos": {
+            "all_ok": false,
+            "enforced": true,
+            "repos": [
+              {
+                "ahead_count": 0,
+                "behind_count": 0,
+                "branch": "codex/liveops-hardening-20260317",
+                "branch_status": "## codex/liveops-hardening-20260317...origin/codex/liveops-hardening-20260317\n M phi_monitoring_dashboard.py\n?? RUNBOOK_DISASTER_RECOVERY.md\n?? RUNBOOK_INCIDENT_RESPONSE.md\n?? RUNBOOK_SCALING_OPERATIONS.md\n?? config/situation_room_overlay_canada.json\n?? docs/SITUATION_WAR_ROOM_DASHBOARD_PLAN.md\n?? phi_slo_monitoring.sh\n?? phi_sovereign_keepalive.sh\n?? phi_sovereign_status.sh",
+                "dirty_count": 17,
+                "exists": true,
+                "expected_origin": "https://github.com/Fractal5-Solutions/dominion-command-center.git",
+                "git_repo": true,
+                "issues": [
+                  "dirty_worktree:17"
+                ],
+                "name": "dominion-command-center",
+                "ok": false,
+                "origin": "https://github.com/Fractal5-Solutions/dominion-command-center.git",
+                "origin_match": true,
+                "path": "D:\\phi-ops\\github\\dominion-command-center"
+              },
+              {
+                "ahead_count": 0,
+                "behind_count": 0,
+                "branch": "codex/confirm-sweep-20260317-demo-build",
+                "branch_status": "## codex/confirm-sweep-20260317-demo-build...origin/codex/confirm-sweep-20260317-demo-build\n M .github/workflows/production-deploy.yml\n M command_core.py\n M data/apollo_crm/crm_accounts.csv\n M data/apollo_crm/crm_accounts.json\n M data/dropbox_drive/files.json\n M data/gmail_contacts/contacts.json\n M data/google_drive/documents.json\n M data/unified_relationships.json\n M reports/relationship_analysis.json",
+                "dirty_count": 36,
+                "exists": true,
+                "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-demo-build.git",
+                "git_repo": true,
+                "issues": [
+                  "dirty_worktree:36"
+                ],
+                "name": "dominion-demo-build",
+                "ok": false,
+                "origin": "https://github.com/Fractal5-Solutions/dominion-os-demo-build.git",
+                "origin_match": true,
+                "path": "D:\\phi-ops\\github\\dominion-demo-build"
+              },
+              {
+                "ahead_count": 0,
+                "behind_count": 0,
+                "branch": "codex/optimize-receipts-20260317-desktop",
+                "branch_status": "## codex/optimize-receipts-20260317-desktop...origin/codex/optimize-receipts-20260317-desktop",
+                "dirty_count": 0,
+                "exists": true,
+                "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-desktop-pc.git",
+                "git_repo": true,
+                "issues": [],
+                "name": "dominion-os-1.0-desktop-pc",
+                "ok": true,
+                "origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-desktop-pc.git",
+                "origin_match": true,
+                "path": "D:\\phi-ops\\github\\dominion-os-1.0-desktop-pc"
+              },
+              {
+                "ahead_count": 0,
+                "behind_count": 0,
+                "branch": "codex/optimize-receipts-20260317-gcloud",
+                "branch_status": "## codex/optimize-receipts-20260317-gcloud...origin/codex/optimize-receipts-20260317-gcloud",
+                "dirty_count": 0,
+                "exists": true,
+                "expected_origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-gcloud.git",
+                "git_repo": true,
+                "issues": [],
+                "name": "dominion-os-1.0-gcloud",
+                "ok": true,
+                "origin": "https://github.com/Fractal5-Solutions/dominion-os-1.0-gcloud.git",
+                "origin_match": true,
+                "path": "D:\\phi-ops\\github\\dominion-os-1.0-gcloud"
+              }
+            ]
+          },
+          "runtime": {
+            "alerts_listener": {
+              "detail": "200",
+              "ok": true,
+              "url": "http://127.0.0.1:9009/health"
+            },
+            "dominion_web": {
+              "detail": "200",
+              "ok": true,
+              "url": "http://127.0.0.1:8080/api/health"
+            },
+            "liveops_mcp_initialize": {
+              "detail": "200",
+              "ok": true,
+              "url": "http://127.0.0.1:8000/mcp"
+            },
+            "llm_gateway_health": {
+              "detail": "200",
+              "ok": true,
+              "url": "http://127.0.0.1:8082/health"
+            }
+          },
+          "scripts": {
+            "phi_sovereign_keepalive_sh": true,
+            "phi_sovereign_status_ps1": true,
+            "phi_sovereign_status_sh": true,
+            "sovereign_master_orchestrator_sh": true
+          },
+          "telemetry": {
+            "current_status_file": "D:\\phi-ops\\github\\dominion-command-center\\telemetry\\phi_status_current.json",
+            "current_status_write_utc": "2026-03-19T13:15:23Z",
+            "directory_exists": true
+          },
+          "timestamp_utc": "2026-03-19T13:15:23Z"
+        }
+      },
+      "sources": {
+        "bc_news_feed_url": "https://news.gov.bc.ca/feed",
+        "elections_url": "https://www.elections.ca/res/cir/mapsCorner/vector/PollingDivisionBoundaries_2025_SHP.zip",
+        "statscan_url": "https://www12.statcan.gc.ca/census-recensement/2021/geo/sip-pis/boundary-limites/files-fichiers/lda_000b21a_e.zip"
+      },
+      "workspace_root": "D:\\phi-ops"
+    },
+    "ok": true,
+    "redactions_applied": true,
+    "summary": "Political stack ready"
+  },
+  "launcher_status": "\r\nComponent         State         Detail                                                                                 \r\n---------         -----         ------                                                                                 \r\nliveops-port-8000 listening     pid=23500                                                                              \r\nliveops-port-8082 listening     pid=26344                                                                              \r\nliveops-port-9009 listening     pid=21756                                                                              \r\ndominion-web      healthy       http://localhost:8080 pid=15224 health=200                                             \r\nphi-chief         running       pid=22396 telemetry=github\\\\dominion-command-center\\\\telemetry\\\\phi_status_current.json\r\nliveops-sync      running       pid=19360                                                                              \r\nwork-continuity   running       pid=17552 incomplete=0 stale=0 active=<none>                                           \r\nsync-remote-hook  enabled       origin repo=D:\\phi-ops\\.run\\at2-sync-repo                                              \r\nsync-gcs-hook     disabled                                                                                             \r\ndominion-os-core  nextjs        npm run dev in D:\\phi-ops\\github\\dominion-os-core                                      \r\nlatest-save       ready         2026-03-19T11:12:49Z -> E:\\dominion-os-1.0                                             \r\nlegacy-core       junction-to-d C:\\Users\\at2-f\\OneDrive\\Documents\\GitHub\\dominion-os-core",
+  "startup": {
+    "liveops_already_running": true,
+    "phi_chief_already_running": true
+  },
+  "top5_audit": {
+    "generated_at_utc": "2026-03-19T13:15:31.4020969Z",
+    "cycle": 1,
+    "top_repo_count": 5,
+    "selected_repo_count": 5,
+    "include_demo_build": true,
+    "workspace_root": "D:\\phi-ops",
+    "github_root": "D:\\phi-ops\\github",
+    "aggregate": {
+      "avg_health_score": 75.6,
+      "repos_below_80": 2,
+      "repos_with_dirty_worktree": 2,
+      "repos_missing_ci": 2,
+      "repos_missing_tests": 2
+    },
+    "repos": [
+      {
+        "name": "dominion-command-center",
+        "path": "D:\\phi-ops\\github\\dominion-command-center",
+        "branch": "codex/liveops-hardening-20260317",
+        "upstream": "origin/codex/liveops-hardening-20260317",
+        "ahead": 0,
+        "behind": 0,
+        "dirty_files": 17,
+        "untracked_files": 16,
+        "staged_files": 0,
+        "last_commit_at": "2026-03-17T14:46:20.0000000-07:00",
+        "last_commit_subject": "Add product-line alignment receipt for first five repos",
+        "todo_markers": 66,
+        "has_ci": true,
+        "has_tests": true,
+        "has_readme": true,
+        "tracked_file_count": 4378,
+        "priority_score": 167,
+        "health_score": 50,
+        "recommendations": [
+          "Stabilize the working tree and checkpoint in-flight changes.",
+          "Burn down TODO/FIXME/HACK backlog (66 markers tracked)."
+        ]
+      },
+      {
+        "name": "dominion-os-core",
+        "path": "D:\\phi-ops\\github\\dominion-os-core",
+        "branch": "main",
+        "upstream": "origin/main",
+        "ahead": 2,
+        "behind": 0,
+        "dirty_files": 0,
+        "untracked_files": 0,
+        "staged_files": 0,
+        "last_commit_at": "2026-03-16T08:08:15.0000000-07:00",
+        "last_commit_subject": "ops: add local health rewrite",
+        "todo_markers": 0,
+        "has_ci": true,
+        "has_tests": true,
+        "has_readme": true,
+        "tracked_file_count": 835,
+        "priority_score": 135,
+        "health_score": 100,
+        "recommendations": [
+          "Maintain current standards and enforce no-regression checks."
+        ]
+      },
+      {
+        "name": "Fractal5-Solutions__dominion-command-center",
+        "path": "D:\\phi-ops\\github\\Fractal5-Solutions__dominion-command-center",
+        "branch": "staging/situation-room/infra-terraform",
+        "upstream": "origin/staging/situation-room/infra-terraform",
+        "ahead": 0,
+        "behind": 0,
+        "dirty_files": 6,
+        "untracked_files": 4,
+        "staged_files": 1,
+        "last_commit_at": "2026-03-19T06:05:25.0000000-07:00",
+        "last_commit_subject": "feat(situation-room): terraform baseline for staging",
+        "todo_markers": 64,
+        "has_ci": true,
+        "has_tests": true,
+        "has_readme": true,
+        "tracked_file_count": 4351,
+        "priority_score": 122,
+        "health_score": 68,
+        "recommendations": [
+          "Stabilize the working tree and checkpoint in-flight changes.",
+          "Burn down TODO/FIXME/HACK backlog (64 markers tracked)."
+        ]
+      },
+      {
+        "name": "dominion-os-1.0-desktop-pc",
+        "path": "D:\\phi-ops\\github\\dominion-os-1.0-desktop-pc",
+        "branch": "codex/optimize-receipts-20260317-desktop",
+        "upstream": "origin/codex/optimize-receipts-20260317-desktop",
+        "ahead": 0,
+        "behind": 0,
+        "dirty_files": 0,
+        "untracked_files": 0,
+        "staged_files": 0,
+        "last_commit_at": "2026-03-17T14:45:09.0000000-07:00",
+        "last_commit_subject": "Standardize product-line stack contract for non-mobile deployments",
+        "todo_markers": 0,
+        "has_ci": false,
+        "has_tests": false,
+        "has_readme": true,
+        "tracked_file_count": 6,
+        "priority_score": 107,
+        "health_score": 80,
+        "recommendations": [
+          "Add CI workflow gates (lint, test, and build).",
+          "Establish baseline automated tests and require them in CI."
+        ]
+      },
+      {
+        "name": "dominion-os-1.0-politics",
+        "path": "D:\\phi-ops\\github\\dominion-os-1.0-politics",
+        "branch": "codex/optimize-receipts-20260317-politics",
+        "upstream": "origin/codex/optimize-receipts-20260317-politics",
+        "ahead": 0,
+        "behind": 0,
+        "dirty_files": 0,
+        "untracked_files": 0,
+        "staged_files": 0,
+        "last_commit_at": "2026-03-17T14:45:28.0000000-07:00",
+        "last_commit_subject": "Standardize product-line stack contract for non-mobile deployments",
+        "todo_markers": 0,
+        "has_ci": false,
+        "has_tests": false,
+        "has_readme": true,
+        "tracked_file_count": 5,
+        "priority_score": 107,
+        "health_score": 80,
+        "recommendations": [
+          "Add CI workflow gates (lint, test, and build).",
+          "Establish baseline automated tests and require them in CI."
+        ]
+      }
+    ],
+    "all_repo_candidates": [
+      {
+        "name": "dominion-command-center",
+        "priority_score": 167,
+        "health_score": 50
+      },
+      {
+        "name": "dominion-os-core",
+        "priority_score": 135,
+        "health_score": 100
+      },
+      {
+        "name": "Fractal5-Solutions__dominion-command-center",
+        "priority_score": 122,
+        "health_score": 68
+      },
+      {
+        "name": "dominion-os-1.0-desktop-pc",
+        "priority_score": 107,
+        "health_score": 80
+      },
+      {
+        "name": "dominion-os-1.0-gcloud",
+        "priority_score": 107,
+        "health_score": 100
+      },
+      {
+        "name": "dominion-os-1.0-politics",
+        "priority_score": 107,
+        "health_score": 80
+      },
+      {
+        "name": "dominion-demo-build",
+        "priority_score": 57,
+        "health_score": 50
+      }
+    ],
+    "outputs": {
+      "latest_summary_json": "D:\\phi-ops\\.run\\chief-of-staff\\latest-top5-audit.json",
+      "history_jsonl": "D:\\phi-ops\\.run\\chief-of-staff\\history-top5-audit.jsonl",
+      "markdown_plan": "D:\\phi-ops\\docs\\TOP5_REPO_PERFECTION_PLAN.md"
+    }
+  },
+  "top5_plan_monitor": null
+}

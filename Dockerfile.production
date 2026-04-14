@@ -1,0 +1,88 @@
+# Multi-stage production-hardened Dockerfile for Dominion OS
+# Optimized for security, performance, and minimal attack surface
+
+# Stage 1: Build dependencies and the public runtime payload
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy runtime requirements and install Python dependencies
+COPY requirements-prod.txt .
+RUN pip install --no-cache-dir --user --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --user -r requirements-prod.txt
+
+# Build a strict public runtime payload and strip plain Python source.
+RUN mkdir -p /runtime/scripts/telemetry /runtime/demo /runtime/store /runtime/products
+COPY command_core.py /runtime/
+COPY demo /runtime/demo
+COPY store /runtime/store
+COPY products /runtime/products
+COPY scripts/telemetry/config_project1.txt /runtime/scripts/telemetry/config_project1.txt
+COPY scripts/telemetry/config_project2.txt /runtime/scripts/telemetry/config_project2.txt
+COPY scripts/telemetry/services_project1.txt /runtime/scripts/telemetry/services_project1.txt
+COPY scripts/telemetry/services_project2.txt /runtime/scripts/telemetry/services_project2.txt
+RUN python -m compileall -b /runtime/command_core.py && rm /runtime/command_core.py
+
+# Stage 2: Production runtime
+FROM python:3.12-slim AS production
+
+# Security: Create non-root user
+RUN groupadd -r dominion && useradd -r -g dominion -u 1000 dominion
+
+# Set working directory
+WORKDIR /app
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
+
+# Copy Python dependencies from builder
+COPY --from=builder /root/.local /home/dominion/.local
+
+# Copy the public runtime payload only.
+COPY --from=builder --chown=dominion:dominion /runtime/ /app/
+
+# Set Python path
+ENV PATH=/home/dominion/.local/bin:$PATH
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Security headers and configurations
+ENV SECURE_HEADERS=1
+ENV HSTS_ENABLED=1
+ENV CSP_ENABLED=1
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
+
+# Switch to non-root user
+USER dominion
+
+# Expose port (will be set by Cloud Run)
+EXPOSE 8080
+
+# Use gunicorn for production with optimal settings.
+# The runtime payload carries compiled bytecode plus public static assets only.
+CMD exec gunicorn --bind :${PORT:-8080} \
+    --workers 4 \
+    --threads 2 \
+    --worker-class gthread \
+    --worker-tmp-dir /dev/shm \
+    --timeout 300 \
+    --keep-alive 5 \
+    --log-level info \
+    --access-logfile - \
+    --error-logfile - \
+    --log-file - \
+    "command_core:app"

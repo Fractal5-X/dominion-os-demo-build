@@ -1,0 +1,129 @@
+{
+  "service_name": "Channel Connect SaaS",
+  "description": "Continuous monitoring and content injection for Fractal5 Solutions Inc marketing channels",
+  "channels": [
+    {
+      "name": "Squarespace",
+      "type": "website",
+      "url": "https://www.fractal5solutions.com",
+      "monitoring": {
+        "check_interval": 300,
+        "monitor_content": true,
+        "monitor_traffic": true,
+        "monitor_analytics": true,
+        "google_analytics": {
+          "gtm_container_id": "GTM-KMJJQX55",
+          "track_pageviews": true,
+          "track_events": true
+        }
+      },
+      "injection": {
+        "enabled": true,
+        "content_types": ["blog_posts", "updates", "html_pages"],
+        "api_endpoint": "https://api.squarespace.com/1.0/commerce/orders",
+        "html_prep_enabled": true,
+        "css_cannon_enabled": true
+      }
+    },
+    {
+      "name": "Facebook",
+      "type": "social",
+      "url": "https://www.facebook.com/profile.php?id=61572428791801",
+      "monitoring": {
+        "check_interval": 180,
+        "monitor_mentions": true,
+        "monitor_engagement": true,
+        "monitor_page_insights": true
+      },
+      "injection": {
+        "enabled": true,
+        "content_types": ["posts", "stories", "images"],
+        "api_endpoint": "https://graph.facebook.com/v18.0/me/feed",
+        "page_id": "61572428791801"
+      }
+    },
+    {
+      "name": "Twitter",
+      "type": "social",
+      "url": "https://x.com/Fractal5X",
+      "monitoring": {
+        "check_interval": 120,
+        "monitor_mentions": true,
+        "monitor_hashtags": ["#Fractal5", "#SovereignAI", "#DominionOS"],
+        "monitor_engagement": true,
+        "monitor_followers": true
+      },
+      "injection": {
+        "enabled": true,
+        "content_types": ["tweets", "threads", "images"],
+        "api_endpoint": "https://api.twitter.com/2/tweets",
+        "username": "Fractal5X"
+      }
+    },
+    {
+      "name": "YouTube",
+      "type": "video",
+      "url": "https://www.youtube.com/@Fractal5Solutions",
+      "monitoring": {
+        "check_interval": 600,
+        "monitor_videos": true,
+        "monitor_comments": true,
+        "monitor_subscribers": true,
+        "monitor_views": true
+      },
+      "injection": {
+        "enabled": true,
+        "content_types": ["videos", "shorts", "live_streams", "thumbnails"],
+        "api_endpoint": "https://www.googleapis.com/youtube/v3/videos",
+        "channel_handle": "@Fractal5Solutions"
+      }
+    },
+    {
+      "name": "Substack",
+      "type": "newsletter",
+      "url": "https://matthewburbidge.substack.com/",
+      "monitoring": {
+        "check_interval": 3600,
+        "monitor_subscribers": true,
+        "monitor_posts": true,
+        "monitor_comments": true,
+        "monitor_engagement": true
+      },
+      "injection": {
+        "enabled": true,
+        "content_types": ["newsletter_posts", "updates", "paid_content"],
+        "api_endpoint": "https://substack.com/api/v1/posts",
+        "author": "matthewburbidge"
+      }
+    }
+  ],
+  "monitoring_settings": {
+    "global_check_interval": 300,
+    "alert_thresholds": {
+      "engagement_drop": 0.2,
+      "traffic_drop": 0.15,
+      "mention_spike": 2.0
+    },
+    "alert_channels": ["email", "slack"]
+  },
+  "injection_settings": {
+    "content_schedule": {
+      "facebook": "0 */4 * * *",
+      "twitter": "0 */2 * * *",
+      "youtube": "0 12 * * 1,4",
+      "substack": "0 9 * * 2,5",
+      "website": "0 10 * * 1,3,5"
+    },
+    "content_sources": [
+      "phi_ai_content_generator",
+      "market_intelligence",
+      "product_updates",
+      "customer_stories"
+    ]
+  },
+  "dominion_integration": {
+    "phi_ai_agent": "phi_commercial_ai_agent.sh",
+    "monitoring_endpoint": "http://localhost:8081/api/monitor",
+    "content_api": "http://localhost:5000/api/content"
+  }
+}

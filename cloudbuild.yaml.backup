@@ -1,0 +1,68 @@
+# Canon Φ v1.0 Pre-Deploy Color Validation
+# Cloud Build configuration for GCP deployments
+# Enforces sealed five monochrome before Cloud Run deployment
+
+steps:
+  # Step 1: Build Container
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-container'
+    args:
+      - 'build'
+      - '-f'
+      - '$_DOCKERFILE'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/$_SERVICE_NAME:latest'
+      - '$_BUILD_CONTEXT'
+
+  # Step 2: Push Container
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-container'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/$_SERVICE_NAME:latest'
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-cloud-run'
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_SERVICE_NAME'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/$_SERVICE_NAME:latest'
+      - '--region'
+      - '$_REGION'
+      - '--platform'
+      - 'managed'
+      - '--port'
+      - '8080'
+      - '--set-env-vars'
+      - 'SERVICE_NAME=$_SERVICE_NAME'
+      - '--allow-unauthenticated'
+      - '--quiet'
+
+# Substitutions for deployment configuration
+substitutions:
+  _SERVICE_NAME: 'dominion-os-demo'
+  _REGION: 'us-central1'
+  _DOCKERFILE: 'Dockerfile.production'
+  _BUILD_CONTEXT: '.'
+
+# Build configuration
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
+
+# Timeout
+timeout: 1200s
+
+# Images to push
+images:
+  - 'gcr.io/$PROJECT_ID/$_SERVICE_NAME:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/$_SERVICE_NAME:latest'
+
+# Tags for build tracking
+tags:
+  - 'canon-phi-validated'
+  - '$_SERVICE_NAME'
+  - 'dominion-os-1-0'

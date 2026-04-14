@@ -1,0 +1,40 @@
+{
+  "election_date_local": "2026-04-13",
+  "timezone_reference": "America/Toronto",
+  "advance_polls": {
+    "source": "Elections Canada CNW release, Apr 7, 2026",
+    "source_url": "https://www.newswire.ca/news-releases/estimate-of-turnout-at-advance-polls-now-available-827128005.html",
+    "as_of": "2026-04-07T15:32:00-04:00",
+    "total_voters_estimated": 37900,
+    "ridings": {
+      "Scarborough Southwest": 10300,
+      "Terrebonne": 18200,
+      "University-Rosedale": 9400
+    },
+    "notes": "Estimate only; some polls may not have reported yet."
+  },
+  "special_ballots": {
+    "source": "Elections Canada special ballot data page",
+    "source_url": "https://www.elections.ca/content.aspx?dir=2026%2Fsbv&document=index&lang=e&section=ele",
+    "raw_csv_url": "https://www.elections.ca/ele/2026/sbv/vbm-vpp-e.csv",
+    "as_of": "2026-04-12T23:59:00-04:00",
+    "issued_by_riding": {
+      "Scarborough Southwest": 782,
+      "Terrebonne": 1279,
+      "University-Rosedale": 2819
+    },
+    "issued_total": 4880,
+    "returned_total": 3424,
+    "returned_rate": 0.7016393443,
+    "returned_by_category": {
+      "inside_riding": 2778,
+      "outside_riding": 44,
+      "outside_canada": 602
+    },
+    "issued_by_category": {
+      "inside_riding": 2994,
+      "outside_riding": 112,
+      "outside_canada": 1774
+    }
+  }
+}
