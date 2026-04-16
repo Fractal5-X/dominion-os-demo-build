@@ -20,6 +20,9 @@ SYNC_ENFORCE_CONTROLLED_TARGET="${PHI_SYNC_ENFORCE_CONTROLLED_TARGET:-1}"
 SYNC_CONTROLLED_REMOTE="${PHI_SYNC_CONTROLLED_REMOTE:-fork}"
 SYNC_CONTROLLED_BRANCH="${PHI_SYNC_CONTROLLED_BRANCH:-live-ops-sync}"
 SYNC_REBASE_ON_REMOTE_AHEAD="${PHI_SYNC_REBASE_ON_REMOTE_AHEAD:-1}"
+SYNC_WORKFLOW_SCOPE_FALLBACK_ENABLED="${PHI_SYNC_WORKFLOW_SCOPE_FALLBACK_ENABLED:-1}"
+SYNC_WORKFLOW_FALLBACK_BRANCH="${PHI_SYNC_WORKFLOW_FALLBACK_BRANCH:-live-ops-sync-safe}"
+SYNC_WORKFLOW_FALLBACK_BASE_BRANCH="${PHI_SYNC_WORKFLOW_FALLBACK_BASE_BRANCH:-main}"
 
 mkdir -p "${TELEMETRY_DIR}"
 
@@ -271,6 +274,130 @@ push_preflight_or_skip() {
   return 1
 }
 
+workflow_scope_error_detected() {
+  tail -n 120 "${LOG}" | grep -Fq "without \`workflow\` scope"
+}
+
+determine_nonworkflow_base_ref() {
+  local primary_ref="refs/remotes/${SYNC_REMOTE}/${SYNC_BRANCH}"
+  local fallback_base_ref="refs/remotes/${SYNC_REMOTE}/${SYNC_WORKFLOW_FALLBACK_BASE_BRANCH}"
+
+  if git show-ref --verify --quiet "${primary_ref}"; then
+    printf '%s\n' "${SYNC_REMOTE}/${SYNC_BRANCH}"
+    return 0
+  fi
+
+  if git show-ref --verify --quiet "${fallback_base_ref}"; then
+    printf '%s\n' "${SYNC_REMOTE}/${SYNC_WORKFLOW_FALLBACK_BASE_BRANCH}"
+    return 0
+  fi
+
+  return 1
+}
+
+push_nonworkflow_fallback_snapshot() {
+  local push_remote="$1"
+  local base_ref="$2"
+  local fallback_branch="$3"
+  local fallback_ref=""
+  local tmp_root=""
+  local fallback_worktree=""
+  local patch_file=""
+  local ts=""
+  local attempt=1
+
+  if ! git diff --name-only "${base_ref}..HEAD" -- ".github/workflows" | grep -q .; then
+    return 1
+  fi
+
+  if [[ "${fallback_branch}" == refs/* ]]; then
+    fallback_ref="${fallback_branch}"
+  else
+    fallback_ref="refs/heads/${fallback_branch}"
+  fi
+
+  tmp_root="$(mktemp -d "${TMPDIR:-/tmp}/phi-sync-fallback.XXXXXX")"
+  fallback_worktree="${tmp_root}/worktree"
+  patch_file="${tmp_root}/nonworkflow.patch"
+
+  git diff --binary "${base_ref}..HEAD" -- . ':(exclude).github/workflows/**' > "${patch_file}"
+  if [ ! -s "${patch_file}" ]; then
+    log "Workflow-scope fallback: no non-workflow delta to publish from ${base_ref}..HEAD"
+    rm -rf "${tmp_root}"
+    return 0
+  fi
+
+  if ! git worktree add --detach "${fallback_worktree}" "${base_ref}" >> "${LOG}" 2>&1; then
+    log "Workflow-scope fallback: failed to create temporary worktree from ${base_ref}"
+    rm -rf "${tmp_root}"
+    return 1
+  fi
+
+  if ! git -C "${fallback_worktree}" apply --index --3way "${patch_file}" >> "${LOG}" 2>&1; then
+    log "Workflow-scope fallback: unable to apply non-workflow patch cleanly"
+    git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+    rm -rf "${tmp_root}"
+    return 1
+  fi
+
+  if git -C "${fallback_worktree}" diff --cached --quiet; then
+    log "Workflow-scope fallback: computed patch produced no staged changes"
+    git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+    rm -rf "${tmp_root}"
+    return 0
+  fi
+
+  ts="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+  if ! git -C "${fallback_worktree}" commit -m "PHI intelligent sync fallback (non-workflow): ${ts}" >> "${LOG}" 2>&1; then
+    log "Workflow-scope fallback: failed to create fallback commit"
+    git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+    rm -rf "${tmp_root}"
+    return 1
+  fi
+
+  while [ "${attempt}" -le "${SYNC_MAX_RETRIES}" ]; do
+    if git -C "${fallback_worktree}" push "${push_remote}" "HEAD:${fallback_ref}" >> "${LOG}" 2>&1; then
+      log "Workflow-scope fallback: published non-workflow snapshot to ${fallback_branch}"
+      git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+      rm -rf "${tmp_root}"
+      return 0
+    fi
+
+    if [ "${attempt}" -lt "${SYNC_MAX_RETRIES}" ]; then
+      local backoff=$(( SYNC_RETRY_SECONDS * attempt ))
+      log "Workflow-scope fallback push attempt ${attempt} failed; retrying in ${backoff}s"
+      sleep "${backoff}"
+    fi
+    attempt=$((attempt + 1))
+  done
+
+  log "Workflow-scope fallback: failed to publish non-workflow snapshot after ${SYNC_MAX_RETRIES} attempts"
+  git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+  rm -rf "${tmp_root}"
+  return 1
+}
+
+handle_workflow_scope_fallback() {
+  local push_remote="$1"
+  local base_ref=""
+
+  if ! is_truthy "${SYNC_WORKFLOW_SCOPE_FALLBACK_ENABLED}"; then
+    return 1
+  fi
+
+  if ! workflow_scope_error_detected; then
+    return 1
+  fi
+
+  if ! base_ref="$(determine_nonworkflow_base_ref)"; then
+    log "Workflow-scope fallback: no suitable base ref found (tried ${SYNC_BRANCH} and ${SYNC_WORKFLOW_FALLBACK_BASE_BRANCH})"
+    return 1
+  fi
+
+  log "Workflow-scope fallback: primary push blocked, attempting non-workflow publish from ${base_ref} to ${SYNC_WORKFLOW_FALLBACK_BRANCH}"
+  push_nonworkflow_fallback_snapshot "${push_remote}" "${base_ref}" "${SYNC_WORKFLOW_FALLBACK_BRANCH}"
+}
+
 main() {
   with_lock_or_exit
 
@@ -367,9 +494,10 @@ main() {
   remote_url="$(git remote get-url "${SYNC_REMOTE}")"
 
   if is_https_remote "${remote_url}"; then
+    local push_remote
     # First try any credentials already configured in git/gh helpers.
     if push_preflight "${SYNC_REMOTE}" "${SYNC_BRANCH}"; then
-      push_with_retry "${SYNC_REMOTE}" "${SYNC_BRANCH}" || exit 1
+      push_remote="${SYNC_REMOTE}"
     else
       log "Default git credentials failed preflight for ${SYNC_REMOTE}/${SYNC_BRANCH}; scanning stored credentials"
       local auth_remote
@@ -377,7 +505,15 @@ main() {
         log "No write-capable stored credential found; push deferred"
         exit 0
       fi
-      push_with_retry "${auth_remote}" "${SYNC_BRANCH}" || exit 1
+      push_remote="${auth_remote}"
+    fi
+
+    if ! push_with_retry "${push_remote}" "${SYNC_BRANCH}"; then
+      if handle_workflow_scope_fallback "${push_remote}"; then
+        log "Primary sync push deferred by workflow-scope policy; fallback sync completed"
+        exit 0
+      fi
+      exit 1
     fi
   else
     if ! push_preflight_or_skip "${SYNC_REMOTE}" "${SYNC_BRANCH}" "${SYNC_REMOTE}"; then

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-19T06:15:13.027601",
+  "generated_at": "2026-04-15T17:30:09.231905",
   "summary": {
     "total_relationships": 5,
     "high_value_relationships": 1,
@@ -13,7 +13,7 @@
   },
   "top_relationships": [
     {
-      "entity_id": "contact_469628",
+      "entity_id": "contact_830233",
       "entity_name": "Mike Johnson",
       "entity_type": "",
       "email": "mike.johnson@cloudtech.dev",
@@ -94,10 +94,10 @@
       ],
       "tags": [],
       "notes": "",
-      "last_updated": "2026-03-19T06:15:13.026021"
+      "last_updated": "2026-04-15T17:30:09.231160"
     },
     {
-      "entity_id": "contact_464201",
+      "entity_id": "contact_131703",
       "entity_name": "John Doe",
       "entity_type": "",
       "email": "john.doe@techcorp.com",
@@ -176,10 +176,10 @@
       ],
       "tags": [],
       "notes": "",
-      "last_updated": "2026-03-19T06:15:13.026021"
+      "last_updated": "2026-04-15T17:30:09.231156"
     },
     {
-      "entity_id": "contact_608007",
+      "entity_id": "contact_651347",
       "entity_name": "Sarah Smith",
       "entity_type": "",
       "email": "sarah.smith@dataflow.io",
@@ -241,10 +241,10 @@
       ],
       "tags": [],
       "notes": "",
-      "last_updated": "2026-03-19T06:15:13.026021"
+      "last_updated": "2026-04-15T17:30:09.231166"
     },
     {
-      "entity_id": "contact_435364",
+      "entity_id": "contact_285382",
       "entity_name": "Jane Wilson",
       "entity_type": "",
       "email": "jane.wilson@techstartup.net",
@@ -304,10 +304,10 @@
       ],
       "tags": [],
       "notes": "",
-      "last_updated": "2026-03-19T06:15:13.026021"
+      "last_updated": "2026-04-15T17:30:09.231146"
     },
     {
-      "entity_id": "contact_849141",
+      "entity_id": "contact_3662",
       "entity_name": "Erica",
       "entity_type": "",
       "email": "sacredselfworkshops@gmail.com",
@@ -333,7 +333,7 @@
       ],
       "tags": [],
       "notes": "",
-      "last_updated": "2026-03-19T06:15:13.026021"
+      "last_updated": "2026-04-15T17:30:09.231163"
     }
   ],
   "source_breakdown": {

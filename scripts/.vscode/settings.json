@@ -72,6 +72,6 @@
   // Workbench startup performance
   "workbench.startupEditor": "none",
   "window.restoreWindows": "none",
-  "extensions.autoCheckUpdates": false,
-  "extensions.autoUpdate": false
+  "extensions.autoCheckUpdates": true,
+  "extensions.autoUpdate": true
 }
