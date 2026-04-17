@@ -299,6 +299,9 @@ push_nonworkflow_fallback_snapshot() {
   local push_remote="$1"
   local base_ref="$2"
   local fallback_branch="$3"
+  local fallback_branch_name=""
+  local fallback_remote_ref=""
+  local worktree_base_ref=""
   local fallback_ref=""
   local tmp_root=""
   local fallback_worktree=""
@@ -312,23 +315,31 @@ push_nonworkflow_fallback_snapshot() {
 
   if [[ "${fallback_branch}" == refs/* ]]; then
     fallback_ref="${fallback_branch}"
+    fallback_branch_name="${fallback_branch#refs/heads/}"
   else
     fallback_ref="refs/heads/${fallback_branch}"
+    fallback_branch_name="${fallback_branch}"
+  fi
+
+  fallback_remote_ref="refs/remotes/${SYNC_REMOTE}/${fallback_branch_name}"
+  worktree_base_ref="${base_ref}"
+  if git show-ref --verify --quiet "${fallback_remote_ref}"; then
+    worktree_base_ref="${SYNC_REMOTE}/${fallback_branch_name}"
   fi
 
   tmp_root="$(mktemp -d "${TMPDIR:-/tmp}/phi-sync-fallback.XXXXXX")"
   fallback_worktree="${tmp_root}/worktree"
   patch_file="${tmp_root}/nonworkflow.patch"
 
-  git diff --binary "${base_ref}..HEAD" -- . ':(exclude).github/workflows/**' > "${patch_file}"
+  git diff --binary "${worktree_base_ref}..HEAD" -- . ':(exclude).github/workflows/**' > "${patch_file}"
   if [ ! -s "${patch_file}" ]; then
-    log "Workflow-scope fallback: no non-workflow delta to publish from ${base_ref}..HEAD"
+    log "Workflow-scope fallback: no non-workflow delta to publish from ${worktree_base_ref}..HEAD"
     rm -rf "${tmp_root}"
     return 0
   fi
 
-  if ! git worktree add --detach "${fallback_worktree}" "${base_ref}" >> "${LOG}" 2>&1; then
-    log "Workflow-scope fallback: failed to create temporary worktree from ${base_ref}"
+  if ! git worktree add --detach "${fallback_worktree}" "${worktree_base_ref}" >> "${LOG}" 2>&1; then
+    log "Workflow-scope fallback: failed to create temporary worktree from ${worktree_base_ref}"
     rm -rf "${tmp_root}"
     return 1
   fi
@@ -363,6 +374,18 @@ push_nonworkflow_fallback_snapshot() {
       return 0
     fi
 
+    # If remote fallback branch advanced, rebase this fallback commit and retry.
+    if git -C "${fallback_worktree}" fetch "${push_remote}" "${fallback_ref}" >> "${LOG}" 2>&1; then
+      if git -C "${fallback_worktree}" rebase FETCH_HEAD >> "${LOG}" 2>&1; then
+        log "Workflow-scope fallback: rebased fallback commit onto latest ${fallback_branch}"
+      else
+        log "Workflow-scope fallback: rebase onto latest ${fallback_branch} failed"
+        git -C "${fallback_worktree}" rebase --abort >> "${LOG}" 2>&1 || true
+      fi
+    else
+      log "Workflow-scope fallback: fetch of latest ${fallback_branch} failed"
+    fi
+
     if [ "${attempt}" -lt "${SYNC_MAX_RETRIES}" ]; then
       local backoff=$(( SYNC_RETRY_SECONDS * attempt ))
       log "Workflow-scope fallback push attempt ${attempt} failed; retrying in ${backoff}s"
@@ -370,6 +393,14 @@ push_nonworkflow_fallback_snapshot() {
     fi
     attempt=$((attempt + 1))
   done
+
+  local timestamped_branch="${fallback_branch_name}-$(date -u +%Y%m%d%H%M%S)"
+  if git -C "${fallback_worktree}" push "${push_remote}" "HEAD:refs/heads/${timestamped_branch}" >> "${LOG}" 2>&1; then
+    log "Workflow-scope fallback: published non-workflow snapshot to ${timestamped_branch}"
+    git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
+    rm -rf "${tmp_root}"
+    return 0
+  fi
 
   log "Workflow-scope fallback: failed to publish non-workflow snapshot after ${SYNC_MAX_RETRIES} attempts"
   git worktree remove --force "${fallback_worktree}" >> "${LOG}" 2>&1 || true
