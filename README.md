@@ -16,6 +16,20 @@ Quickstart
 - Run demo: `python demo_build.py run`
 - Tests: `python -m unittest`
 
+Authoritative Local Live Ops Bridge
+
+- `dominion-command-center` is the apex control plane for local live ops in this workspace.
+- This repo provides the downstream PHI bridge and health surface that command-center drives.
+- Start via command-center: `bash /workspaces/dominion-command-center/scripts/live_ops_start.sh`
+- Stop via command-center: `bash /workspaces/dominion-command-center/scripts/live_ops_stop.sh`
+- Status via command-center: `bash /workspaces/dominion-command-center/scripts/live_ops_status.sh`
+- Verify via command-center: `bash /workspaces/dominion-command-center/scripts/live_ops_verify.sh`
+- Demo-build bridge entrypoints:
+  - `scripts/phi_start_all_systems.sh`
+  - `scripts/phi_stop_all_systems.sh`
+  - `scripts/phi_status.sh`
+  - `scripts/phi_live_ops_verification.sh`
+
 Command Core (full experience)
 
 - Run interactive dashboard (small scale):
