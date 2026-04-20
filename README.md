@@ -30,6 +30,13 @@ Authoritative Local Live Ops Bridge
   - `scripts/phi_status.sh`
   - `scripts/phi_live_ops_verification.sh`
 
+GitHub App Sales Packet
+
+- Buyer packet: `store/github-app/README.md`
+- Buyer listing copy: `store/github-app/listing.md`
+- Enterprise offer mirror: `docs/marketplace/github-app-enterprise.md`
+- Static landing page: `web/sqsp/github-app-enterprise.html`
+
 Command Core (full experience)
 
 - Run interactive dashboard (small scale):

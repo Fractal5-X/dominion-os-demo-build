@@ -1,0 +1,27 @@
+{
+  "sku": "dominion-command-center-github-app",
+  "name": "Dominion Command Center",
+  "channel": "github-marketplace",
+  "seller": "Fractal5 Solutions",
+  "status": "submission-ready",
+  "tagline": "GitHub-native control plane for Dominion OS enterprise deployments",
+  "supports": [
+    "GitHub App installation",
+    "NHITL workflows",
+    "Canada enterprise deployment posture",
+    "Marketplace-aware billing"
+  ],
+  "pricing": {
+    "free_plan": "community",
+    "paid_plan": "team",
+    "enterprise": "private-offer"
+  },
+  "support": {
+    "email": "support@fractal5.com",
+    "sales": "sales@fractal5.com"
+  },
+  "deployment_regions": [
+    "northamerica-northeast1",
+    "northamerica-northeast2"
+  ]
+}
