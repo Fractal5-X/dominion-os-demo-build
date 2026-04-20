@@ -1,0 +1,36 @@
+services:
+  web-ui:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "3000:3000"
+  postgres:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "5432:5432"
+  redis:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "6379:6379"
+  oauth:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "8080:8080"
+  widget:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "8081:8081"
+  java-live-ops:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "8090:8090"
+  prometheus:
+    image: alpine:3.21
+    command: ["sh", "-c", "sleep infinity"]
+    ports:
+      - "9090:9090"
