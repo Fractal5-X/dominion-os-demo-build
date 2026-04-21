@@ -24,6 +24,7 @@ CHECK_INTERVAL="${AI_COMPLETION_CHECK_INTERVAL:-300}"  # 5 minutes
 MAX_RUNTIME="${AI_COMPLETION_MAX_RUNTIME:-$((24 * 3600))}"  # 24 hours maximum
 AUTONOMOUS_OPTIONAL="${PHI_AUTONOMOUS_OPTIONAL:-1}"
 AI_COMPLETE_NOW="${PHI_AI_COMPLETE_NOW:-0}"
+AI_KEEP_RUNNING_AFTER_COMPLETE="${PHI_AI_KEEP_RUNNING_AFTER_COMPLETE:-1}"
 INTELLIGENT_SYNC_HEARTBEAT="${INTELLIGENT_SYNC_HEARTBEAT:-$TELEMETRY_DIR/.last_intelligent_sync}"
 INTELLIGENT_SYNC_MAX_AGE_SECONDS="${INTELLIGENT_SYNC_MAX_AGE_SECONDS:-900}"
 MONITOR_STARTED_UTC="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
@@ -189,6 +190,7 @@ main() {
     local autonomous_complete=0
     local sovereignty_complete=0
     local monitor_state="ACTIVE MONITORING"
+    local completion_announced=0
 
     if is_truthy "$AI_COMPLETE_NOW"; then
         monitor_log "Immediate completion mode enabled (PHI_AI_COMPLETE_NOW=1)"
@@ -220,11 +222,16 @@ main() {
 
             # Check if all processing is complete
             if [ $autonomous_complete -eq 1 ] && [ $sovereignty_complete -eq 1 ]; then
-                monitor_log "🎉 ALL AI PROCESSING COMPLETED SUCCESSFULLY"
                 monitor_state="COMPLETED"
+                if [ "$completion_announced" -eq 0 ]; then
+                    monitor_log "🎉 ALL AI PROCESSING COMPLETED SUCCESSFULLY"
+                    completion_announced=1
+                fi
                 generate_status_report "$monitor_state" "$autonomous_complete" "$sovereignty_complete"
                 monitor_log "📋 Final status report generated: ${STATUS_REPORT}"
-                break
+                if ! is_truthy "$AI_KEEP_RUNNING_AFTER_COMPLETE"; then
+                    break
+                fi
             fi
         fi
 
@@ -249,11 +256,21 @@ main() {
     monitor_log "========================================="
 }
 
-# Run in background
-if [ "${1:-}" = "background" ]; then
-    main >> "$MONITOR_LOG" 2>&1 &
-    echo $! > "$PID_FILE"
-    echo "PHI Background AI Completion Monitor started (PID: $(cat "$PID_FILE"))"
-else
-    main
-fi
+# Run modes
+case "${1:-}" in
+    background)
+        if command -v setsid >/dev/null 2>&1; then
+            setsid bash "$0" run >> "$MONITOR_LOG" 2>&1 < /dev/null &
+        else
+            nohup bash "$0" run >> "$MONITOR_LOG" 2>&1 &
+        fi
+        echo $! > "$PID_FILE"
+        echo "PHI Background AI Completion Monitor started (PID: $(cat "$PID_FILE"))"
+        ;;
+    run)
+        main
+        ;;
+    *)
+        main
+        ;;
+esac
