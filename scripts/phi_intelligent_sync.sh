@@ -40,6 +40,7 @@ with_lock_or_exit() {
   if command -v flock >/dev/null 2>&1; then
     if ! flock -n 9; then
       log "Sync skipped: another intelligent sync process is active"
+      mark_sync_heartbeat
       exit 0
     fi
   fi
@@ -155,31 +156,201 @@ credentials_from_gh_hosts() {
   emit_credential_candidate "gh-hosts:${hosts_file}" "x-access-token" "${token}"
 }
 
+resolve_authorized_user_adc_path() {
+  local path=""
+  local candidates=()
+
+  if [ -n "${PHI_SYNC_ADC_PATH:-}" ]; then
+    candidates+=("${PHI_SYNC_ADC_PATH}")
+  fi
+  if [ -n "${GOOGLE_APPLICATION_CREDENTIALS:-}" ]; then
+    candidates+=("${GOOGLE_APPLICATION_CREDENTIALS}")
+  fi
+  candidates+=(
+    "${HOME}/.cache/google-vscode-extension/auth/application_default_credentials.json"
+    "${HOME}/.config/gcloud/application_default_credentials.json"
+  )
+
+  for path in "${candidates[@]}"; do
+    [ -n "${path}" ] || continue
+    [ -f "${path}" ] || continue
+    printf '%s\n' "${path}"
+    return 0
+  done
+
+  return 1
+}
+
+refresh_access_token_from_authorized_user_adc() {
+  local adc_path="$1"
+  local timeout_seconds="$2"
+
+  timeout "${timeout_seconds}" python3 - "${adc_path}" "${timeout_seconds}" <<'PY'
+import json
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+adc_path = sys.argv[1]
+timeout_seconds = max(1, int(sys.argv[2]))
+
+try:
+    with open(adc_path, "r", encoding="utf-8") as fh:
+        adc = json.load(fh)
+except Exception:
+    raise SystemExit(1)
+
+if adc.get("type") != "authorized_user":
+    raise SystemExit(1)
+
+client_id = (adc.get("client_id") or "").strip()
+client_secret = (adc.get("client_secret") or "").strip()
+refresh_token = (adc.get("refresh_token") or "").strip()
+if not client_id or not client_secret or not refresh_token:
+    raise SystemExit(1)
+
+data = urllib.parse.urlencode(
+    {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token",
+    }
+).encode("utf-8")
+
+request = urllib.request.Request("https://oauth2.googleapis.com/token", data=data, method="POST")
+try:
+    with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+        token_payload = json.loads(response.read().decode("utf-8"))
+except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError):
+    raise SystemExit(1)
+
+access_token = (token_payload.get("access_token") or "").strip()
+if not access_token:
+    raise SystemExit(1)
+
+project = (adc.get("quota_project_id") or adc.get("project_id") or "").strip()
+print(access_token + "\t" + project)
+PY
+}
+
+access_gcp_secret_via_rest() {
+  local access_token="$1"
+  local project="$2"
+  local secret_name="$3"
+  local timeout_seconds="$4"
+
+  timeout "${timeout_seconds}" python3 - "${access_token}" "${project}" "${secret_name}" "${timeout_seconds}" <<'PY'
+import base64
+import json
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+access_token = sys.argv[1]
+project = sys.argv[2]
+secret_name = sys.argv[3]
+timeout_seconds = max(1, int(sys.argv[4]))
+
+path_project = urllib.parse.quote(project, safe="")
+path_secret = urllib.parse.quote(secret_name, safe="")
+url = (
+    "https://secretmanager.googleapis.com/v1/projects/"
+    + path_project
+    + "/secrets/"
+    + path_secret
+    + "/versions/latest:access"
+)
+
+request = urllib.request.Request(url, headers={"Authorization": "Bearer " + access_token})
+try:
+    with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+        body = json.loads(response.read().decode("utf-8"))
+except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError):
+    raise SystemExit(1)
+
+encoded = (((body.get("payload") or {}).get("data")) or "").strip()
+if not encoded:
+    raise SystemExit(1)
+
+padding = "=" * (-len(encoded) % 4)
+try:
+    secret_value = base64.b64decode(encoded + padding).decode("utf-8")
+except Exception:
+    raise SystemExit(1)
+
+print(secret_value)
+PY
+}
+
 credentials_from_gcloud_secret_manager() {
   local gcp_lookup_enabled="${PHI_SYNC_GCP_LOOKUP_ENABLED:-1}"
+  local gcp_rest_fallback_enabled="${PHI_SYNC_GCP_REST_FALLBACK_ENABLED:-1}"
   local secret_names="${PHI_SYNC_GCP_SECRET_NAMES:-GITHUB_TOKEN,GITHUB_PAT,PHI_GITHUB_PAT,github-pat,dominion-github-github-oauthtoken-57a2ca}"
   local project="${PHI_SYNC_GCP_SECRET_PROJECT:-}"
   local gcp_timeout_seconds="${PHI_SYNC_GCP_TIMEOUT_SECONDS:-4}"
-  local secret_name token
+  local secret_name token adc_path adc_refresh auth_access_token adc_project
+  local -a gcp_secrets=()
 
   [ "${gcp_lookup_enabled}" = "1" ] || return
   [ -n "${secret_names}" ] || return
-  command -v gcloud >/dev/null 2>&1 || return
 
-  if [ -z "${project}" ]; then
+  IFS=',' read -r -a gcp_secrets <<< "${secret_names}"
+
+  if [ -z "${project}" ] && command -v gcloud >/dev/null 2>&1; then
     project="$(gcloud config get-value project 2>/dev/null || true)"
   fi
 
-  IFS=',' read -r -a gcp_secrets <<< "${secret_names}"
+  if command -v gcloud >/dev/null 2>&1; then
+    for secret_name in "${gcp_secrets[@]}"; do
+      secret_name="$(printf '%s' "${secret_name}" | xargs)"
+      [ -n "${secret_name}" ] || continue
+      if [ -n "${project}" ]; then
+        token="$(timeout "${gcp_timeout_seconds}" gcloud secrets versions access latest --secret="${secret_name}" --project="${project}" 2>/dev/null || true)"
+      else
+        token="$(timeout "${gcp_timeout_seconds}" gcloud secrets versions access latest --secret="${secret_name}" 2>/dev/null || true)"
+      fi
+      emit_credential_candidate "gcp-secret:${secret_name}" "x-access-token" "${token}"
+    done
+  fi
+
+  if [ "${gcp_rest_fallback_enabled}" != "1" ]; then
+    return
+  fi
+  if ! command -v python3 >/dev/null 2>&1; then
+    return
+  fi
+
+  adc_path="$(resolve_authorized_user_adc_path || true)"
+  [ -n "${adc_path}" ] || return
+
+  adc_refresh="$(refresh_access_token_from_authorized_user_adc "${adc_path}" "${gcp_timeout_seconds}" || true)"
+  [ -n "${adc_refresh}" ] || return
+
+  IFS=$'\t' read -r auth_access_token adc_project <<< "${adc_refresh}"
+  auth_access_token="$(trim_credential_value "${auth_access_token}")"
+  adc_project="$(trim_credential_value "${adc_project}")"
+  [ -n "${auth_access_token}" ] || return
+
+  if [ -z "${project}" ]; then
+    project="${adc_project}"
+  fi
+  [ -n "${project}" ] || return
+
   for secret_name in "${gcp_secrets[@]}"; do
     secret_name="$(printf '%s' "${secret_name}" | xargs)"
     [ -n "${secret_name}" ] || continue
-    if [ -n "${project}" ]; then
-      token="$(timeout "${gcp_timeout_seconds}" gcloud secrets versions access latest --secret="${secret_name}" --project="${project}" 2>/dev/null || true)"
-    else
-      token="$(timeout "${gcp_timeout_seconds}" gcloud secrets versions access latest --secret="${secret_name}" 2>/dev/null || true)"
+    token="$(access_gcp_secret_via_rest "${auth_access_token}" "${project}" "${secret_name}" "${gcp_timeout_seconds}" || true)"
+    if [ -n "${token}" ]; then
+      emit_credential_candidate "gcp-secret-rest:${secret_name}" "x-access-token" "${token}"
+      continue
     fi
-    emit_credential_candidate "gcp-secret:${secret_name}" "x-access-token" "${token}"
+    # ADC may be valid while specific secret names are absent or unauthorized.
+    if is_truthy "${PHI_SYNC_GCP_REST_VERBOSE:-0}"; then
+      log "GCP Secret Manager REST lookup failed for ${secret_name} (project=${project})"
+    fi
   done
 }
 
@@ -497,6 +668,7 @@ main() {
     if [ "${commits_behind}" -gt 0 ] && is_truthy "${SYNC_REBASE_ON_REMOTE_AHEAD}"; then
       if working_tree_dirty; then
         log "Remote ${SYNC_REMOTE}/${SYNC_BRANCH} is ahead by ${commits_behind}; working tree dirty, deferring rebase/push"
+        mark_sync_heartbeat
         exit 0
       fi
       log "Remote ${SYNC_REMOTE}/${SYNC_BRANCH} is ahead by ${commits_behind}; attempting guarded rebase"
@@ -541,6 +713,7 @@ main() {
       local auth_remote
       if ! auth_remote="$(select_https_push_remote "${remote_url}" "${SYNC_BRANCH}")"; then
         log "No write-capable stored credential found; push deferred"
+        mark_sync_heartbeat
         exit 0
       fi
       push_remote="${auth_remote}"
@@ -555,6 +728,7 @@ main() {
     fi
   else
     if ! push_preflight_or_skip "${SYNC_REMOTE}" "${SYNC_BRANCH}" "${SYNC_REMOTE}"; then
+      mark_sync_heartbeat
       exit 0
     fi
     push_with_retry "${SYNC_REMOTE}" "${SYNC_BRANCH}" || exit 1
