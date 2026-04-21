@@ -9,6 +9,7 @@ REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"
 LOG="${TELEMETRY_DIR}/intelligent_sync.log"
 LOCK_FILE="${TELEMETRY_DIR}/intelligent_sync.lock"
+HEARTBEAT_FILE="${TELEMETRY_DIR}/.last_intelligent_sync"
 
 SYNC_REMOTE="${PHI_SYNC_REMOTE:-}"
 SYNC_BRANCH="${PHI_SYNC_BRANCH:-}"
@@ -28,6 +29,10 @@ mkdir -p "${TELEMETRY_DIR}"
 
 log() {
   printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$1" >> "${LOG}"
+}
+
+mark_sync_heartbeat() {
+  date -u +'%Y-%m-%dT%H:%M:%SZ' > "${HEARTBEAT_FILE}"
 }
 
 with_lock_or_exit() {
@@ -683,11 +688,13 @@ main() {
 
   if [ "${commits_ahead}" -eq 0 ]; then
     log "No commits to push for ${SYNC_BRANCH}"
+    mark_sync_heartbeat
     exit 0
   fi
 
   if [ "${SYNC_PUSH_ENABLED}" != "1" ]; then
     log "Push disabled by PHI_SYNC_PUSH_ENABLED=${SYNC_PUSH_ENABLED}; sync completed locally"
+    mark_sync_heartbeat
     exit 0
   fi
 
@@ -728,6 +735,7 @@ main() {
   fi
 
   log "Intelligent sync finished"
+  mark_sync_heartbeat
 }
 
 main "$@"
