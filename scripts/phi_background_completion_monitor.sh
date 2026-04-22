@@ -76,10 +76,10 @@ check_sovereignty_completion() {
     local monitor_status=""
     if [ -x "$SCRIPT_DIR/phi_monitor_supervisor.sh" ]; then
         monitor_status="$(bash "$SCRIPT_DIR/phi_monitor_supervisor.sh" status 2>/dev/null || true)"
-        if [[ "$monitor_status" == *"continuous_monitor=running("* ]] && \
-           [[ "$monitor_status" == *"sovereign_monitor=running("* ]] && \
-           [[ "$monitor_status" == *"auto_audit=running("* ]] && \
-           [[ "$monitor_status" == *"intelligent_sync=running("* ]]; then
+        if echo "$monitor_status" | grep -q "continuous_monitor=running" && \
+           echo "$monitor_status" | grep -q "sovereign_monitor=running" && \
+           echo "$monitor_status" | grep -q "auto_audit=running" && \
+           echo "$monitor_status" | grep -q "intelligent_sync=running"; then
             local now_epoch=0
             local heartbeat_epoch=0
             now_epoch="$(date +%s)"

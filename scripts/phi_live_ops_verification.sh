@@ -31,10 +31,11 @@ done
 
 monitor_status="$(${SCRIPT_DIR}/phi_monitor_supervisor.sh status 2>/dev/null || true)"
 monitor_healthy=0
-if [[ "${monitor_status}" == *"supervisor=running("* ]] && \
-   [[ "${monitor_status}" == *"continuous_monitor=running("* ]] && \
-   [[ "${monitor_status}" == *"sovereign_monitor=running("* ]] && \
-   [[ "${monitor_status}" == *"auto_audit=running("* ]]; then
+if [[ "${monitor_status}" == *"supervisor=running"* ]] && \
+   [[ "${monitor_status}" == *"continuous_monitor=running"* ]] && \
+   [[ "${monitor_status}" == *"sovereign_monitor=running"* ]] && \
+   [[ "${monitor_status}" == *"auto_audit=running"* ]] && \
+   [[ "${monitor_status}" == *"intelligent_sync=running"* ]]; then
   monitor_healthy=1
 fi
 

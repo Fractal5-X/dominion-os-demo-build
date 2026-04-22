@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"
-PID_FILE="${TELEMETRY_DIR}/continuous_monitor.pid"
-LOCK_FILE="${TELEMETRY_DIR}/continuous_monitor.lock"
-LOG_FILE="${TELEMETRY_DIR}/continuous_monitor.log"
+PID_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.pid"
+LOCK_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.lock"
+LOG_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.log"
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 PATTERN="${SCRIPT_PATH} run"
-INTERVAL="${PHI_CONTINUOUS_MONITOR_INTERVAL:-20}"
+SYNC_SCRIPT="${SCRIPT_DIR}/phi_intelligent_sync.sh"
+INTERVAL="${PHI_INTELLIGENT_SYNC_INTERVAL:-60}"
 
 mkdir -p "${TELEMETRY_DIR}"
 
-is_alive() { [ -n "${1:-}" ] && kill -0 "$1" 2>/dev/null; }
+is_alive() {
+  [ -n "${1:-}" ] && kill -0 "$1" 2>/dev/null
+}
+
 current_pid() {
   local pid=""
   if [ -f "${PID_FILE}" ]; then
@@ -28,6 +32,7 @@ current_pid() {
     echo "${pid}"
   fi
 }
+
 start_daemon() {
   local pid
   pid="$(current_pid || true)"
@@ -42,8 +47,12 @@ start_daemon() {
   fi
   sleep 0.5
   pid="$(current_pid || true)"
-  [ -n "${pid}" ] && echo "running(pid=${pid})" || { echo "stopped"; return 1; }
+  [ -n "${pid}" ] && echo "running(pid=${pid})" || {
+    echo "stopped"
+    return 1
+  }
 }
+
 stop_daemon() {
   local pid
   pid="$(current_pid || true)"
@@ -55,23 +64,35 @@ stop_daemon() {
   rm -f "${PID_FILE}"
   echo "stopped"
 }
+
 status_daemon() {
   local pid
   pid="$(current_pid || true)"
   [ -n "${pid}" ] && echo "running(pid=${pid})" || echo "stopped"
 }
+
 run_loop() {
+  if [ ! -x "${SYNC_SCRIPT}" ]; then
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] missing sync script: ${SYNC_SCRIPT}" >> "${LOG_FILE}"
+    exit 1
+  fi
+
   exec 9>"${LOCK_FILE}"
   command -v flock >/dev/null 2>&1 && flock -n 9 || true
   echo $$ > "${PID_FILE}"
   trap 'rm -f "${PID_FILE}"' EXIT
+
   while true; do
-    bash "${SCRIPT_DIR}/phi_start_all_systems.sh" --ensure-services-only --skip-monitor-start --quiet >/dev/null 2>&1 || true
-    bash "${SCRIPT_DIR}/phi_status.sh" --quiet >/dev/null 2>&1 || true
-    printf '[%s] continuous monitor sweep complete\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${LOG_FILE}"
+    printf '[%s] intelligent sync sweep start\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${LOG_FILE}"
+    if bash "${SYNC_SCRIPT}" >> "${LOG_FILE}" 2>&1; then
+      printf '[%s] intelligent sync sweep complete\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${LOG_FILE}"
+    else
+      printf '[%s] intelligent sync sweep failed\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "${LOG_FILE}"
+    fi
     sleep "${INTERVAL}"
   done
 }
+
 case "${1:-start}" in
   start) start_daemon ;;
   stop) stop_daemon ;;
