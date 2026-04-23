@@ -12,3 +12,17 @@ out/autopilot/
 
 # Local environment files
 .env
+scripts/reports/operations_handoff_*.md
+scripts/reports/final_*.txt
+
+# Operational telemetry and logs (generated at runtime)
+scripts/telemetry/*.log
+scripts/telemetry/*.lock
+scripts/telemetry/*.pid
+scripts/telemetry/.last_*
+scripts/logs/
+
+# Operational data directories
+scripts/data/
+scripts/telemetry/tmp/
+scripts/telemetry/*.json
