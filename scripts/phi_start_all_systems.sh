@@ -2,6 +2,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYNC_ENV_FILE="${PHI_SYNC_ENV_FILE:-${SCRIPT_DIR}/live_ops_sync.env}"
+if [ -f "${SYNC_ENV_FILE}" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${SYNC_ENV_FILE}"
+  set +a
+fi
 ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 LOG_DIR="${SCRIPT_DIR}/logs"
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"
@@ -9,6 +16,7 @@ STARTUP_LOG="${LOG_DIR}/phi_startup_$(date -u +%Y%m%d_%H%M%S).log"
 QUIET=0
 ENSURE_ONLY=0
 SKIP_MONITORS=0
+DOCKER_REPAIR_ON_START="${PHI_DOCKER_REPAIR_ON_START:-1}"
 
 for arg in "$@"; do
   case "$arg" in
@@ -93,6 +101,46 @@ start_stub() {
   return 1
 }
 
+ensure_docker_preflight() {
+  local docker_repair_script="${SCRIPT_DIR}/docker_repair_optimal.sh"
+  local docker_repair_log="${LOG_DIR}/docker_repair_$(date -u +%Y%m%d_%H%M%S).log"
+  local rc=0
+
+  if ! command -v docker >/dev/null 2>&1; then
+    say "ℹ️  Docker CLI not available in runtime; skipping Docker pre-flight"
+    return 0
+  fi
+
+  if [ "${DOCKER_REPAIR_ON_START}" != "1" ]; then
+    say "ℹ️  Docker pre-flight disabled (PHI_DOCKER_REPAIR_ON_START=${DOCKER_REPAIR_ON_START})"
+    return 0
+  fi
+
+  if [ ! -x "${docker_repair_script}" ]; then
+    say "ℹ️  Docker pre-flight script missing: ${docker_repair_script}"
+    return 0
+  fi
+
+  set +e
+  bash "${docker_repair_script}" >> "${docker_repair_log}" 2>&1
+  rc=$?
+  set -e
+
+  if [ "${rc}" -eq 0 ]; then
+    say "✅ Docker pre-flight repair completed"
+    return 0
+  fi
+
+  if [ "${rc}" -eq 2 ]; then
+    say "⚠️  Docker pre-flight partial: runtime lacks nested-container privileges (continuing)"
+  elif [ "${rc}" -eq 3 ]; then
+    say "⚠️  Docker pre-flight partial: network/auth blocked container canary (continuing)"
+  else
+    say "⚠️  Docker pre-flight failed with exit code ${rc} (continuing)"
+  fi
+  return 0
+}
+
 ensure_command_core_artifacts() {
   if [ -f "${ROOT}/dist/command_core/summary.txt" ] && [ -f "${ROOT}/dist/command_core/session.json" ]; then
     say "✅ Command Core artifacts already present"
@@ -122,6 +170,9 @@ ensure_command_core_artifacts() {
 say "[$(date -u +'%Y-%m-%d %H:%M:%S')] ═══════════════════════════════════════════════════════════════════"
 say "[$(date -u +'%Y-%m-%d %H:%M:%S')] PHI System Startup initiated at $(date -u +'%Y-%m-%d %H:%M:%S') UTC"
 say "[$(date -u +'%Y-%m-%d %H:%M:%S')] ═══════════════════════════════════════════════════════════════════"
+
+say "PHASE 0: DOCKER PRE-FLIGHT"
+ensure_docker_preflight
 
 if [ "${ENSURE_ONLY}" -eq 0 ]; then
   say "PHASE 1: ENVIRONMENT VERIFICATION"

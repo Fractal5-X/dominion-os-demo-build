@@ -1,0 +1,2 @@
+[2026-04-23T21:30:38Z] [INFO] Starting ecosystem optimizer mode=apply-safe root=/workspaces
+[2026-04-23T21:31:33Z] [INFO] Optimizer completed; report=/workspaces/dominion-os-demo-build/scripts/reports/ecosystem_optimizer_20260423_213038Z.md

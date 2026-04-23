@@ -1,46 +1,46 @@
 services:
   atlassian-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3000:3000"
   figma-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3001:3001"
   stripe-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3002:3002"
   github-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3003:3003"
   playwright-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3004:3004"
   chrome-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3005:3005"
   pylance-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3007:3007"
   grafana-mcp:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "3008:3008"
   prometheus:
-    image: alpine:3.21
+    image: alpine:3.23.4
     command: ["sh", "-c", "sleep infinity"]
     ports:
       - "9090:9090"

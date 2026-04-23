@@ -2,6 +2,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYNC_ENV_FILE="${PHI_SYNC_ENV_FILE:-${SCRIPT_DIR}/live_ops_sync.env}"
+if [ -f "${SYNC_ENV_FILE}" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${SYNC_ENV_FILE}"
+  set +a
+fi
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"
 PID_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.pid"
 LOCK_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.lock"
@@ -9,7 +16,7 @@ LOG_FILE="${TELEMETRY_DIR}/intelligent_sync_daemon.log"
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 PATTERN="${SCRIPT_PATH} run"
 SYNC_SCRIPT="${SCRIPT_DIR}/phi_intelligent_sync.sh"
-INTERVAL="${PHI_INTELLIGENT_SYNC_INTERVAL:-60}"
+INTERVAL="${PHI_INTELLIGENT_SYNC_INTERVAL:-120}"
 
 mkdir -p "${TELEMETRY_DIR}"
 

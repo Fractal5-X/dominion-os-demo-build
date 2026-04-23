@@ -1,0 +1,12 @@
+[2026-04-23T13:45:57Z] [INFO] Starting ecosystem optimizer mode=apply-aggressive root=/workspaces
+[2026-04-23T13:46:20Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-ai-gateway
+[2026-04-23T13:46:21Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-api
+[2026-04-23T13:46:22Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-demo
+[2026-04-23T13:46:23Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-gateway
+[2026-04-23T13:46:24Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-harvesting
+[2026-04-23T13:46:25Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-os
+[2026-04-23T13:46:26Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-os-1-0
+[2026-04-23T13:46:28Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-phi-ui
+[2026-04-23T13:46:29Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/dominion-ui
+[2026-04-23T13:46:30Z] [WARN] Skipping tune due billing=false: f5-demo-sandbox/situation-sidecar
+[2026-04-23T13:48:22Z] [INFO] Optimizer completed; report=/workspaces/dominion-os-demo-build/scripts/reports/ecosystem_optimizer_20260423_134557Z.md

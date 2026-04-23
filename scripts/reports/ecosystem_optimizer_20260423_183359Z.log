@@ -1,0 +1,2 @@
+[2026-04-23T18:33:59Z] [INFO] Starting ecosystem optimizer mode=audit root=/workspaces
+[2026-04-23T18:34:19Z] [INFO] Optimizer completed; report=/workspaces/dominion-os-demo-build/scripts/reports/ecosystem_optimizer_20260423_183359Z.md

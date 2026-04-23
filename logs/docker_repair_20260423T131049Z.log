@@ -1,0 +1,10 @@
+[repair] found reachable docker context: default
+[repair] docker daemon reachable
+client=29.1.3 server=29.1.3
+Docker Compose version v5.1.3
+[repair] canary failed for a non-permission reason (network/auth/image availability).
+[repair] stderr preview:
+Unable to find image 'hello-world:latest' locally
+docker: Error response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
+
+Run 'docker run --help' for more information

@@ -1,0 +1,4 @@
+[2026-04-23T17:23:47Z] [INFO] Ensured allowlisted service is public: dominion-core-prod/api
+[2026-04-23T17:23:52Z] [INFO] Ensured allowlisted service is public: dominion-core-prod/chatgpt-gateway
+[2026-04-23T17:24:08Z] [INFO] Ensured allowlisted service is public: dominion-core-prod/dominion-os-demo
+[2026-04-23T17:28:17Z] [INFO] Cloud governor complete overall=PASS report=/workspaces/dominion-os-demo-build/scripts/reports/cloud_governor_20260423_172245Z.md

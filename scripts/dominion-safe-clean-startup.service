@@ -1,0 +1,22 @@
+[Unit]
+Description=Dominion Safe-Clean Startup Service
+Documentation=https://github.com/Fractal5-Solutions/dominion-os-demo-build
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=vscode
+Group=vscode
+WorkingDirectory=/workspaces/dominion-os-demo-build/scripts
+ExecStart=/workspaces/dominion-os-demo-build/scripts/dominion_safe_clean_startup.sh start-headless
+ExecStop=/workspaces/dominion-os-demo-build/scripts/dominion_safe_clean_startup.sh stop
+RemainAfterExit=true
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dominion-safe-clean
+TimeoutStartSec=300
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

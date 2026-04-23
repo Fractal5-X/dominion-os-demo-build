@@ -1,0 +1,17 @@
+[2026-04-23T21:30:31Z] [INFO] Repair phase start
+[repair] found reachable docker context: default
+[repair] docker daemon reachable
+client=29.1.3 server=29.1.3
+Docker Compose version v5.1.3
+[repair] canary failed for a non-permission reason (network/auth/image availability).
+[repair] stderr preview:
+Unable to find image 'hello-world:latest' locally
+docker: Error response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
+
+Run 'docker run --help' for more information
+running(pid=4235)
+running(pid=555)
+[2026-04-23T21:30:38Z] [INFO] Starting ecosystem optimizer mode=apply-safe root=/workspaces
+[2026-04-23T21:31:33Z] [INFO] Optimizer completed; report=/workspaces/dominion-os-demo-build/scripts/reports/ecosystem_optimizer_20260423_213038Z.md
+/workspaces/dominion-os-demo-build/scripts/reports/ecosystem_optimizer_20260423_213038Z.md
+[2026-04-23T21:31:33Z] [INFO] Starting ecosystem optimizer mode=apply-aggressive root=/workspaces

@@ -16,6 +16,17 @@ Quickstart
 - Run demo: `python demo_build.py run`
 - Tests: `python -m unittest`
 
+Full-Stack Startup Plan (Command Center)
+
+- One-command startup with Docker + GitHub + VS Code readiness checks:
+  - `bash scripts/dominion_command_center_full_stack.sh`
+- Strict safe-clean startup (fail-fast, no partial startup):
+  - `bash scripts/dominion_command_center_full_stack.sh --safe-clean`
+- Operational safe-clean launcher:
+  - `bash scripts/dominion_safe_clean_startup.sh start`
+- Plan/runbook:
+  - `docs/DOMINION_COMMAND_CENTER_FULL_STACK_PLAN.md`
+
 Authoritative Local Live Ops Bridge
 
 - `dominion-command-center` is the apex control plane for local live ops in this workspace.

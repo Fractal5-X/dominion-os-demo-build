@@ -1,0 +1,37 @@
+[2026-04-23 13:09:33] ═══════════════════════════════════════════════════════════════════
+[2026-04-23 13:09:33] PHI System Startup initiated at 2026-04-23 13:09:33 UTC
+[2026-04-23 13:09:33] ═══════════════════════════════════════════════════════════════════
+PHASE 0: DOCKER PRE-FLIGHT
+⚠️  Docker pre-flight failed with exit code 0 (continuing)
+PHASE 1: ENVIRONMENT VERIFICATION
+✅ Python available: Python 3.12.13
+✅ Directory structure verified
+✅ Command Core artifacts already present
+PHASE 2: CORE SERVICES STARTUP
+[2026-04-23 13:09:35] Starting PHI-OAuth-Server...
+✅ PHI-OAuth-Server already running on port 8080
+[2026-04-23 13:09:35] Starting PHI-AskPHI-Widget...
+✅ PHI-AskPHI-Widget already running on port 8081
+PHASE 3: COMMAND CENTER SERVICES
+[2026-04-23 13:09:35] Starting Dominion-Command-Center...
+✅ Dominion-Command-Center already running on port 5000
+[2026-04-23 13:09:35] Starting Billing-Service...
+✅ Billing-Service already running on port 5001
+[2026-04-23 13:09:35] Starting Dominion-Command-Core...
+✅ Dominion-Command-Core already running on port 5002
+[2026-04-23 13:09:35] Starting Dominion-Java-LiveOps-Site...
+✅ Dominion-Java-LiveOps-Site already running on port 8090
+[2026-04-23 13:09:35] Starting Sidecar-Service...
+✅ Sidecar-Service already running on port 5003
+[2026-04-23 13:09:35] Starting ChatGPT-Gateway...
+✅ ChatGPT-Gateway already running on port 5004
+PHASE 4: LEGACY SYSTEMS
+[2026-04-23 13:09:35] Starting Politics-Local-Legacy...
+✅ Politics-Local-Legacy already running on port 5005
+PHASE 5: MONITORING & BACKGROUND SERVICES
+✅ Monitor supervisor ensured
+PHASE 6: SYSTEM STATUS VERIFICATION
+✅ System status snapshot updated
+PHASE 7: STARTUP COMPLETE
+✅ PHI System Startup Complete!
+ℹ️  Command-center startup path is active

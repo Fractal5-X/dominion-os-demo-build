@@ -6,6 +6,13 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+SYNC_ENV_FILE="${PHI_SYNC_ENV_FILE:-${SCRIPT_DIR}/live_ops_sync.env}"
+if [ -f "${SYNC_ENV_FILE}" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${SYNC_ENV_FILE}"
+  set +a
+fi
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"
 LOG="${TELEMETRY_DIR}/intelligent_sync.log"
 LOCK_FILE="${TELEMETRY_DIR}/intelligent_sync.lock"
@@ -24,6 +31,32 @@ SYNC_REBASE_ON_REMOTE_AHEAD="${PHI_SYNC_REBASE_ON_REMOTE_AHEAD:-1}"
 SYNC_WORKFLOW_SCOPE_FALLBACK_ENABLED="${PHI_SYNC_WORKFLOW_SCOPE_FALLBACK_ENABLED:-1}"
 SYNC_WORKFLOW_FALLBACK_BRANCH="${PHI_SYNC_WORKFLOW_FALLBACK_BRANCH:-live-ops-sync-safe}"
 SYNC_WORKFLOW_FALLBACK_BASE_BRANCH="${PHI_SYNC_WORKFLOW_FALLBACK_BASE_BRANCH:-main}"
+SYNC_REPLICATION_ONLY_ON_PUSH="${PHI_SYNC_REPLICATION_ONLY_ON_PUSH:-0}"
+
+SYNC_LOCAL_MIRROR_ENABLED="${PHI_SYNC_LOCAL_MIRROR_ENABLED:-1}"
+SYNC_LOCAL_MIRROR_MODE="${PHI_SYNC_LOCAL_MIRROR_MODE:-targeted}"
+SYNC_LOCAL_SOURCE_ROOT_RAW="${PHI_SYNC_LOCAL_SOURCE_ROOT:-${REPO_DIR}}"
+SYNC_LOCAL_MIRROR_PATH_RAW="${PHI_SYNC_LOCAL_MIRROR_PATH:-D:\\workspaces\\dominion-os-demo-build-live}"
+SYNC_LOCAL_MIRROR_FALLBACK_PATH_RAW="${PHI_SYNC_LOCAL_MIRROR_FALLBACK_PATH:-/workspaces/dominion-os-demo-build-live}"
+SYNC_LOCAL_MIRROR_PATHS="${PHI_SYNC_LOCAL_MIRROR_PATHS:-scripts/telemetry dist/command_core reports}"
+SYNC_LOCAL_MIRROR_EXCLUDES="${PHI_SYNC_LOCAL_MIRROR_EXCLUDES:-.git/ logs/ scripts/logs/ scripts/reports/ .venv/ node_modules/}"
+SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS="${PHI_SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS:-30}"
+SYNC_LOCAL_MIRROR_HEARTBEAT_FILE="${TELEMETRY_DIR}/.last_local_mirror_sync"
+
+SYNC_GCS_ENABLED="${PHI_SYNC_GCS_ENABLED:-1}"
+SYNC_GCS_BUCKET="${PHI_SYNC_GCS_BUCKET:-}"
+SYNC_GCS_PREFIX="${PHI_SYNC_GCS_PREFIX:-dominion-live-ops}"
+SYNC_GCS_SOURCE_ROOT_RAW="${PHI_SYNC_GCS_SOURCE_ROOT:-${SYNC_LOCAL_SOURCE_ROOT_RAW}}"
+SYNC_GCS_INCLUDE_PATHS="${PHI_SYNC_GCS_INCLUDE_PATHS:-scripts/telemetry dist/command_core reports}"
+SYNC_GCS_EXCLUDE_REGEX="${PHI_SYNC_GCS_EXCLUDE_REGEX:-(^|/)(\\.git/|logs/|scripts/logs/)|\\.(tmp|swp|pid)$}"
+SYNC_GCS_DELETE_UNMATCHED="${PHI_SYNC_GCS_DELETE_UNMATCHED:-0}"
+SYNC_GCS_PARALLEL="${PHI_SYNC_GCS_PARALLEL:-1}"
+SYNC_GCS_CHANGED_ONLY="${PHI_SYNC_GCS_CHANGED_ONLY:-1}"
+SYNC_GCS_MIN_INTERVAL_SECONDS="${PHI_SYNC_GCS_MIN_INTERVAL_SECONDS:-300}"
+SYNC_GCS_MAX_FILES="${PHI_SYNC_GCS_MAX_FILES:-20000}"
+SYNC_GCS_MANIFEST_FILE="${TELEMETRY_DIR}/.last_gcs_manifest"
+SYNC_GCS_HEARTBEAT_FILE="${TELEMETRY_DIR}/.last_gcs_sync"
+SYNC_GCS_HARD_FAIL="${PHI_SYNC_GCS_HARD_FAIL:-0}"
 
 mkdir -p "${TELEMETRY_DIR}"
 
@@ -69,6 +102,369 @@ is_production_env() {
 
 working_tree_dirty() {
   ! git diff --quiet || ! git diff --cached --quiet
+}
+
+to_unix_path() {
+  local input="${1:-}"
+  local drive=""
+  local rest=""
+  if [[ "${input}" =~ ^([A-Za-z]):\\(.*)$ ]]; then
+    drive="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
+    rest="${BASH_REMATCH[2]//\\//}"
+    printf '/mnt/%s/%s\n' "${drive}" "${rest}"
+    return 0
+  fi
+  printf '%s\n' "${input}"
+}
+
+normalize_existing_dir() {
+  local raw_path="${1:-}"
+  local normalized=""
+  [ -n "${raw_path}" ] || return 1
+  normalized="$(to_unix_path "${raw_path}")"
+  if [ -d "${normalized}" ]; then
+    printf '%s\n' "${normalized}"
+    return 0
+  fi
+  return 1
+}
+
+normalize_or_default_dir() {
+  local raw_path="${1:-}"
+  local default_path="${2:-}"
+  normalize_existing_dir "${raw_path}" || printf '%s\n' "${default_path}"
+}
+
+should_run_interval_task() {
+  local heartbeat_file="$1"
+  local min_interval="$2"
+  local now_epoch last_epoch
+
+  [ "${min_interval}" -gt 0 ] || return 0
+  now_epoch="$(date +%s)"
+  if [ -f "${heartbeat_file}" ]; then
+    last_epoch="$(cat "${heartbeat_file}" 2>/dev/null || echo 0)"
+  else
+    last_epoch=0
+  fi
+  [[ "${last_epoch}" =~ ^[0-9]+$ ]] || last_epoch=0
+  if [ $(( now_epoch - last_epoch )) -lt "${min_interval}" ]; then
+    return 1
+  fi
+  return 0
+}
+
+mark_interval_heartbeat() {
+  local heartbeat_file="$1"
+  date +%s > "${heartbeat_file}"
+}
+
+collect_include_paths() {
+  local raw="${1:-}"
+  local item=""
+  raw="${raw//,/ }"
+  for item in ${raw}; do
+    [ -n "${item}" ] || continue
+    printf '%s\n' "${item}"
+  done
+}
+
+collect_excludes() {
+  local raw="${1:-}"
+  local item=""
+  raw="${raw//,/ }"
+  for item in ${raw}; do
+    [ -n "${item}" ] || continue
+    printf '%s\n' "${item}"
+  done
+}
+
+sync_local_mirror() {
+  local source_root target_root exclude item
+  local mount_root=""
+  local rsync_args=()
+  local rel_path source_path dest_path
+  local had_error=0
+
+  is_truthy "${SYNC_LOCAL_MIRROR_ENABLED}" || return 0
+  source_root="$(normalize_or_default_dir "${SYNC_LOCAL_SOURCE_ROOT_RAW}" "${REPO_DIR}")"
+  target_root="$(to_unix_path "${SYNC_LOCAL_MIRROR_PATH_RAW}")"
+  [ -n "${target_root}" ] || return 0
+  [ "${source_root}" != "${target_root}" ] || return 0
+
+  if [[ "${target_root}" =~ ^/mnt/([^/]+)(/.*)?$ ]]; then
+    mount_root="/mnt/${BASH_REMATCH[1]}"
+    if [ ! -d "${mount_root}" ]; then
+      local fallback_root=""
+      fallback_root="$(to_unix_path "${SYNC_LOCAL_MIRROR_FALLBACK_PATH_RAW}")"
+      if [ -n "${fallback_root}" ] && [ "${fallback_root}" != "${target_root}" ]; then
+        log "Local mirror mount unavailable (${mount_root}); using fallback target ${fallback_root}"
+        target_root="${fallback_root}"
+      else
+        log "Local mirror sync skipped: mount root unavailable (${mount_root})"
+        return 0
+      fi
+    fi
+  fi
+
+  if ! should_run_interval_task "${SYNC_LOCAL_MIRROR_HEARTBEAT_FILE}" "${SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS}"; then
+    log "Local mirror sync skipped: min interval ${SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS}s not reached"
+    return 0
+  fi
+
+  if ! command -v rsync >/dev/null 2>&1; then
+    log "Local mirror sync skipped: rsync not installed"
+    return 0
+  fi
+
+  mkdir -p "${target_root}" || {
+    log "Local mirror sync skipped: cannot create target ${target_root}"
+    return 0
+  }
+
+  rsync_args=(-a --human-readable)
+  while IFS= read -r exclude; do
+    rsync_args+=(--exclude "${exclude}")
+  done < <(collect_excludes "${SYNC_LOCAL_MIRROR_EXCLUDES}")
+
+  if [ "${SYNC_LOCAL_MIRROR_MODE}" = "targeted" ]; then
+    while IFS= read -r rel_path; do
+      [ -n "${rel_path}" ] || continue
+      source_path="${source_root}/${rel_path}"
+      dest_path="${target_root}/${rel_path}"
+      [ -e "${source_path}" ] || continue
+
+      if [ -d "${source_path}" ]; then
+        mkdir -p "${dest_path}" || true
+        if ! rsync "${rsync_args[@]}" --delete --delete-delay "${source_path}/" "${dest_path}/" >> "${LOG}" 2>&1; then
+          had_error=1
+          log "Local mirror targeted sync failed for ${rel_path}"
+        fi
+      else
+        mkdir -p "$(dirname "${dest_path}")" || true
+        if ! rsync "${rsync_args[@]}" "${source_path}" "${dest_path}" >> "${LOG}" 2>&1; then
+          had_error=1
+          log "Local mirror targeted sync failed for ${rel_path}"
+        fi
+      fi
+    done < <(collect_include_paths "${SYNC_LOCAL_MIRROR_PATHS}")
+  else
+    if ! rsync "${rsync_args[@]}" --delete --delete-delay "${source_root}/" "${target_root}/" >> "${LOG}" 2>&1; then
+      log "Local mirror sync failed: ${source_root} -> ${target_root}"
+      return 1
+    fi
+  fi
+
+  if [ "${had_error}" -eq 0 ]; then
+    log "Local mirror sync complete (${SYNC_LOCAL_MIRROR_MODE}): ${source_root} -> ${target_root}"
+    mark_interval_heartbeat "${SYNC_LOCAL_MIRROR_HEARTBEAT_FILE}"
+    return 0
+  fi
+
+  log "Local mirror sync completed with errors (${SYNC_LOCAL_MIRROR_MODE}): ${source_root} -> ${target_root}"
+  return 1
+}
+
+compute_tree_manifest() {
+  local source_root="$1"
+  local include_paths="$2"
+  local exclude_regex="$3"
+  local max_files="$4"
+
+  python3 - "${source_root}" "${include_paths}" "${exclude_regex}" "${max_files}" <<'PY'
+import hashlib
+import os
+import re
+import sys
+
+source_root = sys.argv[1]
+include_paths = [p for p in sys.argv[2].replace(",", " ").split() if p.strip()]
+exclude_regex = sys.argv[3]
+max_files = int(sys.argv[4]) if sys.argv[4].isdigit() else 20000
+
+matcher = re.compile(exclude_regex) if exclude_regex else None
+entries = []
+count = 0
+
+for rel_path in include_paths:
+    abs_path = os.path.join(source_root, rel_path)
+    if not os.path.exists(abs_path):
+        continue
+
+    if os.path.isfile(abs_path):
+        rel_file = os.path.relpath(abs_path, source_root).replace("\\", "/")
+        if matcher and matcher.search(rel_file):
+            continue
+        st = os.stat(abs_path)
+        entries.append(f"{rel_file}\t{st.st_size}\t{int(st.st_mtime)}")
+        count += 1
+        continue
+
+    for dirpath, _, files in os.walk(abs_path):
+        files.sort()
+        for filename in files:
+            file_path = os.path.join(dirpath, filename)
+            rel_file = os.path.relpath(file_path, source_root).replace("\\", "/")
+            if matcher and matcher.search(rel_file):
+                continue
+            st = os.stat(file_path)
+            entries.append(f"{rel_file}\t{st.st_size}\t{int(st.st_mtime)}")
+            count += 1
+            if count > max_files:
+                print("OVERFLOW")
+                raise SystemExit(3)
+
+entries.sort()
+digest = hashlib.sha256("\n".join(entries).encode("utf-8")).hexdigest()
+print(f"{digest}\t{count}")
+PY
+}
+
+build_gcs_base_uri() {
+  local bucket="${SYNC_GCS_BUCKET}"
+  local prefix="${SYNC_GCS_PREFIX#/}"
+  prefix="${prefix%/}"
+  if [ -n "${prefix}" ]; then
+    printf 'gs://%s/%s\n' "${bucket}" "${prefix}"
+    return 0
+  fi
+  printf 'gs://%s\n' "${bucket}"
+}
+
+sync_path_to_gcs() {
+  local source_root="$1"
+  local rel_path="$2"
+  local source_path="${source_root}/${rel_path}"
+  local gcs_base_uri="$3"
+  local dest_uri="${gcs_base_uri}/${rel_path}"
+  local -a cmd=()
+
+  [ -e "${source_path}" ] || return 0
+
+  if command -v gsutil >/dev/null 2>&1; then
+    if is_truthy "${SYNC_GCS_PARALLEL}"; then
+      cmd=(gsutil -m)
+    else
+      cmd=(gsutil)
+    fi
+
+    if [ -d "${source_path}" ]; then
+      cmd+=(rsync -r)
+      if is_truthy "${SYNC_GCS_DELETE_UNMATCHED}"; then
+        cmd+=(-d)
+      fi
+      if [ -n "${SYNC_GCS_EXCLUDE_REGEX}" ]; then
+        cmd+=(-x "${SYNC_GCS_EXCLUDE_REGEX}")
+      fi
+      cmd+=("${source_path}" "${dest_uri}")
+    else
+      cmd+=(cp "${source_path}" "${dest_uri}")
+    fi
+  elif command -v gcloud >/dev/null 2>&1; then
+    if [ -d "${source_path}" ]; then
+      cmd=(gcloud storage rsync --recursive)
+      if is_truthy "${SYNC_GCS_DELETE_UNMATCHED}"; then
+        cmd+=(--delete-unmatched-destination-objects)
+      fi
+      cmd+=("${source_path}" "${dest_uri}")
+    else
+      cmd=(gcloud storage cp "${source_path}" "${dest_uri}")
+    fi
+  else
+    log "GCS sync skipped: neither gsutil nor gcloud is available"
+    return 1
+  fi
+
+  if "${cmd[@]}" >> "${LOG}" 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
+sync_to_gcs() {
+  local source_root gcs_base_uri
+  local manifest_line=""
+  local current_hash="" current_count=""
+  local previous_hash=""
+  local rel_path
+  local had_sync_error=0
+
+  is_truthy "${SYNC_GCS_ENABLED}" || return 0
+  if [ -z "${SYNC_GCS_BUCKET}" ]; then
+    log "GCS sync skipped: PHI_SYNC_GCS_BUCKET is not set"
+    return 0
+  fi
+
+  source_root="$(normalize_or_default_dir "${SYNC_GCS_SOURCE_ROOT_RAW}" "${REPO_DIR}")"
+  if [ ! -d "${source_root}" ]; then
+    log "GCS sync skipped: source root not found (${source_root})"
+    return 0
+  fi
+
+  if ! should_run_interval_task "${SYNC_GCS_HEARTBEAT_FILE}" "${SYNC_GCS_MIN_INTERVAL_SECONDS}"; then
+    log "GCS sync skipped: min interval ${SYNC_GCS_MIN_INTERVAL_SECONDS}s not reached"
+    return 0
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    manifest_line="$(compute_tree_manifest "${source_root}" "${SYNC_GCS_INCLUDE_PATHS}" "${SYNC_GCS_EXCLUDE_REGEX}" "${SYNC_GCS_MAX_FILES}" 2>/dev/null || true)"
+    if [ "${manifest_line}" = "OVERFLOW" ]; then
+      log "GCS sync manifest overflow (> ${SYNC_GCS_MAX_FILES} files); forcing sync sweep"
+      manifest_line=""
+    fi
+  fi
+
+  if [ -n "${manifest_line}" ]; then
+    IFS=$'\t' read -r current_hash current_count <<< "${manifest_line}"
+    if [ -f "${SYNC_GCS_MANIFEST_FILE}" ]; then
+      previous_hash="$(cat "${SYNC_GCS_MANIFEST_FILE}" 2>/dev/null || true)"
+    fi
+    if is_truthy "${SYNC_GCS_CHANGED_ONLY}" && [ -n "${current_hash}" ] && [ "${current_hash}" = "${previous_hash}" ]; then
+      log "GCS sync skipped: no material changes detected (${current_count} files indexed)"
+      mark_interval_heartbeat "${SYNC_GCS_HEARTBEAT_FILE}"
+      return 0
+    fi
+  fi
+
+  gcs_base_uri="$(build_gcs_base_uri)"
+  while IFS= read -r rel_path; do
+    [ -n "${rel_path}" ] || continue
+    if ! sync_path_to_gcs "${source_root}" "${rel_path}" "${gcs_base_uri}"; then
+      had_sync_error=1
+      log "GCS sync failed for ${rel_path}"
+    fi
+  done < <(collect_include_paths "${SYNC_GCS_INCLUDE_PATHS}")
+
+  if [ "${had_sync_error}" -eq 1 ]; then
+    if is_truthy "${SYNC_GCS_HARD_FAIL}"; then
+      return 1
+    fi
+    log "GCS sync completed with errors (non-fatal)"
+    return 0
+  fi
+
+  if [ -n "${current_hash}" ]; then
+    printf '%s\n' "${current_hash}" > "${SYNC_GCS_MANIFEST_FILE}"
+  fi
+  mark_interval_heartbeat "${SYNC_GCS_HEARTBEAT_FILE}"
+  log "GCS sync complete to ${gcs_base_uri}"
+  return 0
+}
+
+run_replication_phase() {
+  local phase="${1:-post-sync}"
+
+  if is_truthy "${SYNC_REPLICATION_ONLY_ON_PUSH}" && [ "${phase}" != "push" ] && [ "${phase}" != "fallback-push" ]; then
+    return 0
+  fi
+
+  if ! sync_local_mirror; then
+    log "Replication warning: local mirror sync failed during phase=${phase}"
+  fi
+
+  if ! sync_to_gcs; then
+    log "Replication warning: GCS sync failed during phase=${phase}"
+  fi
 }
 
 detect_sync_remote() {
@@ -668,6 +1064,7 @@ main() {
     if [ "${commits_behind}" -gt 0 ] && is_truthy "${SYNC_REBASE_ON_REMOTE_AHEAD}"; then
       if working_tree_dirty; then
         log "Remote ${SYNC_REMOTE}/${SYNC_BRANCH} is ahead by ${commits_behind}; working tree dirty, deferring rebase/push"
+        run_replication_phase "pre-push"
         mark_sync_heartbeat
         exit 0
       fi
@@ -688,12 +1085,14 @@ main() {
 
   if [ "${commits_ahead}" -eq 0 ]; then
     log "No commits to push for ${SYNC_BRANCH}"
+    run_replication_phase "pre-push"
     mark_sync_heartbeat
     exit 0
   fi
 
   if [ "${SYNC_PUSH_ENABLED}" != "1" ]; then
     log "Push disabled by PHI_SYNC_PUSH_ENABLED=${SYNC_PUSH_ENABLED}; sync completed locally"
+    run_replication_phase "pre-push"
     mark_sync_heartbeat
     exit 0
   fi
@@ -713,6 +1112,7 @@ main() {
       local auth_remote
       if ! auth_remote="$(select_https_push_remote "${remote_url}" "${SYNC_BRANCH}")"; then
         log "No write-capable stored credential found; push deferred"
+        run_replication_phase "pre-push"
         mark_sync_heartbeat
         exit 0
       fi
@@ -722,18 +1122,22 @@ main() {
     if ! push_with_retry "${push_remote}" "${SYNC_BRANCH}"; then
       if handle_workflow_scope_fallback "${push_remote}"; then
         log "Primary sync push deferred by workflow-scope policy; fallback sync completed"
+        run_replication_phase "fallback-push"
+        mark_sync_heartbeat
         exit 0
       fi
       exit 1
     fi
   else
     if ! push_preflight_or_skip "${SYNC_REMOTE}" "${SYNC_BRANCH}" "${SYNC_REMOTE}"; then
+      run_replication_phase "pre-push"
       mark_sync_heartbeat
       exit 0
     fi
     push_with_retry "${SYNC_REMOTE}" "${SYNC_BRANCH}" || exit 1
   fi
 
+  run_replication_phase "push"
   log "Intelligent sync finished"
   mark_sync_heartbeat
 }

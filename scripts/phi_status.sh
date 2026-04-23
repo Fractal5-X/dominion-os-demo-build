@@ -51,10 +51,12 @@ continuous_ok=0
 sovereign_ok=0
 auto_audit_ok=0
 intelligent_sync_ok=0
+ecosystem_optimizer_ok=0
 if echo "${monitor_status}" | grep -q "continuous_monitor=running"; then continuous_ok=1; fi
 if echo "${monitor_status}" | grep -q "sovereign_monitor=running"; then sovereign_ok=1; fi
 if echo "${monitor_status}" | grep -q "auto_audit=running"; then auto_audit_ok=1; fi
 if echo "${monitor_status}" | grep -q "intelligent_sync=running"; then intelligent_sync_ok=1; fi
+if echo "${monitor_status}" | grep -q "ecosystem_optimizer=running"; then ecosystem_optimizer_ok=1; fi
 
 services=(
   "Dominion Command Center|5000|${LOG_DIR}/command_center.pid|HEALTHY"
@@ -99,13 +101,13 @@ for entry in "${services[@]}"; do
   fi
 done
 
-background_healthy=$((continuous_ok + sovereign_ok + auto_audit_ok + intelligent_sync_ok))
+background_healthy=$((continuous_ok + sovereign_ok + auto_audit_ok + intelligent_sync_ok + ecosystem_optimizer_ok))
 active_services=$((web_healthy + legacy_healthy + background_healthy))
 score="$(python3 - <<PY
 web=${web_healthy}
 legacy=${legacy_healthy}
 bg=${background_healthy}
-score=((web/8)*80)+((bg/4)*20)
+score=((web/8)*80)+((bg/5)*20)
 print(f"{score:.2f}")
 PY
 )"
@@ -160,8 +162,8 @@ cat > "${LIVE_OPS_JSON}" <<JSON
     },
     "background": {
       "healthy": ${background_healthy},
-      "total": 4,
-      "status": "$( [ "${background_healthy}" -eq 4 ] && echo PERFECT || echo DEGRADED )"
+      "total": 5,
+      "status": "$( [ "${background_healthy}" -eq 5 ] && echo PERFECT || echo DEGRADED )"
     }
   },
   "system_resources": {
@@ -192,10 +194,11 @@ if [ "${QUIET}" -eq 0 ]; then
   printf '%s Background Completion Monitor\n' "$( [ "${continuous_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
   printf '%s Sovereign Monitor\n' "$( [ "${sovereign_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
   printf '%s Auto Audit\n' "$( [ "${auto_audit_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
-  printf '%s Intelligent Sync\n\n' "$( [ "${intelligent_sync_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
+  printf '%s Intelligent Sync\n' "$( [ "${intelligent_sync_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
+  printf '%s Ecosystem Optimizer\n\n' "$( [ "${ecosystem_optimizer_ok}" -eq 1 ] && echo '✓' || echo '✗' )"
   printf 'SUMMARY\n\n'
   printf 'Total Active Services: %s\n' "${active_services}"
-  if [ "${web_healthy}" -eq 8 ] && [ "${background_healthy}" -eq 4 ]; then
+  if [ "${web_healthy}" -eq 8 ] && [ "${background_healthy}" -eq 5 ]; then
     printf '✓ PHI Systems Operational\n'
   else
     printf '✗ PHI Systems Degraded\n'

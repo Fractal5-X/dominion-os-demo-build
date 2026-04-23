@@ -1,0 +1,14 @@
+[2026-04-23T14:29:03Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/ai-chief-of-staff
+[2026-04-23T14:29:06Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-ai-gateway
+[2026-04-23T14:29:10Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-api
+[2026-04-23T14:29:13Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-demo
+[2026-04-23T14:29:17Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-gateway
+[2026-04-23T14:29:20Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-harvesting
+[2026-04-23T14:29:24Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-os
+[2026-04-23T14:29:28Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-os-1-0
+[2026-04-23T14:29:31Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-phi-ui
+[2026-04-23T14:29:35Z] [INFO] Removed public invoker bindings: f5-demo-sandbox/dominion-ui
+[2026-04-23T14:29:48Z] [INFO] Unlinked billing from non-official project: dominion-marketplace-prod
+[2026-04-23T14:29:58Z] [INFO] Unlinked billing from non-official project: dominion-apps-prod
+[2026-04-23T14:30:54Z] [INFO] Unlinked billing from non-official project: dominion-os-1-0-main
+[2026-04-23T14:31:29Z] [INFO] Unlinked billing from non-official project: dominion-os

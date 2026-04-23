@@ -13,6 +13,7 @@ CONTINUOUS_SCRIPT="${SCRIPT_DIR}/telemetry/continuous_monitor.sh"
 SOVEREIGN_SCRIPT="${SCRIPT_DIR}/sovereign_monitor.sh"
 AUTO_AUDIT_SCRIPT="/workspaces/dominion-command-center/scripts/live_ops_auto_audit_daemon.sh"
 INTELLIGENT_SYNC_SCRIPT="${SCRIPT_DIR}/phi_intelligent_sync_daemon.sh"
+ECOSYSTEM_OPTIMIZER_SCRIPT="${SCRIPT_DIR}/ecosystem_optimizer_daemon.sh"
 
 mkdir -p "${TELEMETRY_DIR}"
 
@@ -64,12 +65,14 @@ print_status() {
   printf 'sovereign_monitor=%s\n' "$(component_status "${SOVEREIGN_SCRIPT}")"
   printf 'auto_audit=%s\n' "$(auto_audit_status)"
   printf 'intelligent_sync=%s\n' "$(component_status "${INTELLIGENT_SYNC_SCRIPT}")"
+  printf 'ecosystem_optimizer=%s\n' "$(component_status "${ECOSYSTEM_OPTIMIZER_SCRIPT}")"
 }
 ensure_components() {
   [ -x "${CONTINUOUS_SCRIPT}" ] && bash "${CONTINUOUS_SCRIPT}" start >/dev/null 2>&1 || true
   [ -x "${SOVEREIGN_SCRIPT}" ] && bash "${SOVEREIGN_SCRIPT}" start >/dev/null 2>&1 || true
   [ -x "${AUTO_AUDIT_SCRIPT}" ] && bash "${AUTO_AUDIT_SCRIPT}" start >/dev/null 2>&1 || true
   [ -x "${INTELLIGENT_SYNC_SCRIPT}" ] && bash "${INTELLIGENT_SYNC_SCRIPT}" start >/dev/null 2>&1 || true
+  [ -x "${ECOSYSTEM_OPTIMIZER_SCRIPT}" ] && bash "${ECOSYSTEM_OPTIMIZER_SCRIPT}" start >/dev/null 2>&1 || true
   bash "${SCRIPT_DIR}/phi_start_all_systems.sh" --ensure-services-only --skip-monitor-start --quiet >/dev/null 2>&1 || true
 }
 start_daemon() {
@@ -101,6 +104,7 @@ stop_daemon() {
   [ -x "${SOVEREIGN_SCRIPT}" ] && bash "${SOVEREIGN_SCRIPT}" stop >/dev/null 2>&1 || true
   [ -x "${AUTO_AUDIT_SCRIPT}" ] && bash "${AUTO_AUDIT_SCRIPT}" stop >/dev/null 2>&1 || true
   [ -x "${INTELLIGENT_SYNC_SCRIPT}" ] && bash "${INTELLIGENT_SYNC_SCRIPT}" stop >/dev/null 2>&1 || true
+  [ -x "${ECOSYSTEM_OPTIMIZER_SCRIPT}" ] && bash "${ECOSYSTEM_OPTIMIZER_SCRIPT}" stop >/dev/null 2>&1 || true
   rm -f "${PID_FILE}"
   echo "stopped"
 }

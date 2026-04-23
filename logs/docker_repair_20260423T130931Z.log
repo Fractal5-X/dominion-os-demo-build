@@ -1,0 +1,7 @@
+[repair] found reachable docker context: default
+[repair] docker daemon reachable
+client=29.1.3 server=29.1.3
+Docker Compose version v5.1.3
+[repair] host restriction detected: unshare is blocked in this container runtime.
+[repair] docker API is available, but pulling/running nested containers can fail without extra host privileges.
+[repair] to fully enable nested containers, run this workspace with --privileged or mount a host docker socket.
