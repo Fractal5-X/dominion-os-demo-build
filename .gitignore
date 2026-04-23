@@ -26,3 +26,9 @@ scripts/logs/
 scripts/data/
 scripts/telemetry/tmp/
 scripts/telemetry/*.json
+# Telemetry files - updated continuously by background monitors
+scripts/telemetry/sovereign_status.json
+scripts/telemetry/system_status.json
+
+# Other dynamic operational files (if they exist)
+scripts/telemetry/*_status.json
