@@ -1,0 +1,33 @@
+[Unit]
+Description=Dominion OS Auto-Startup Service
+Documentation=https://github.com/Fractal5-Solutions/dominion-os-demo-build
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=vscode
+Group=vscode
+WorkingDirectory=/workspaces/dominion-os-demo-build/scripts
+ExecStart=/workspaces/dominion-os-demo-build/scripts/dominion_auto_startup.sh start
+ExecStop=/workspaces/dominion-os-demo-build/scripts/dominion_auto_startup.sh stop
+ExecReload=/workspaces/dominion-os-demo-build/scripts/dominion_auto_startup.sh restart
+Restart=on-failure
+RestartSec=10s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dominion-os
+
+# Security hardening
+PrivateTmp=true
+NoNewPrivileges=false
+ProtectSystem=strict
+ReadWritePaths=/workspaces/dominion-os-demo-build /workspaces/dominion-command-center
+
+# Resource limits
+LimitNOFILE=65536
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
