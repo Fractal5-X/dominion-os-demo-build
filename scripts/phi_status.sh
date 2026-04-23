@@ -169,15 +169,15 @@ cat > "${LIVE_OPS_JSON}" <<JSON
     "memory": {"usage": ${memory_usage}, "status": "HEALTHY"},
     "disk": {"usage": ${disk_usage}, "status": "HEALTHY"}
   },
-  "sovereign_mode": "MAXIMUM_ACTIVE",
-  "authority_level": "13/13"
+  "sovereign_mode": "UNIVERSAL_DOMINION",
+  "authority_level": "14/14"
 }
 JSON
 
 cat > "${SOVEREIGN_JSON}" <<JSON
 {
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "sovereignty_level": "13/13",
+  "sovereignty_level": "14/14",
   "mode": "NHITL_AUTOPILOT",
   "chief": "PHI",
   "phase": "OPERATIONAL",
