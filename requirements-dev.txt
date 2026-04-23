@@ -1,0 +1,31 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Development Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Deployment Target: Development & Testing Environments
+# ═══════════════════════════════════════════════════════════════════════════
+
+-r requirements-complete.txt
+
+# Development & Testing Tools
+pytest==8.4.0
+pytest-asyncio==0.26.0
+pytest-cov==7.0.0
+pytest-mock==3.15.0
+httpx==0.28.1  # For testing FastAPI endpoints
+
+# Code Quality
+black==25.1.0
+flake8==7.2.0
+mypy==1.18.0
+isort==6.0.1
+
+# Debugging
+ipython==9.2.0
+ipdb==0.14.0
+
+# Documentation
+mkdocs==1.6.1
+mkdocs-material==10.1.0
+
+# Load Testing
+locust==2.36.1

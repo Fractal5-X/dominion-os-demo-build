@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Production Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Deployment Target: Production Environments (Linux, Docker, Kubernetes)
+# Burned Configuration: 2026-04-23
+# ═══════════════════════════════════════════════════════════════════════════
+
+-r requirements-complete.txt
+
+# Production ASGI Server
+gunicorn==23.0.0
+
+# Production Monitoring
+sentry-sdk[fastapi]==2.25.1
+prometheus-client==1.1.1
+opentelemetry-api==1.41.0
+opentelemetry-sdk==1.41.0
+opentelemetry-instrumentation-fastapi==0.51b0
+
+# Production Database (Redis for token storage)
+redis==5.4.0
+redis[hiredis]==5.4.0
+
+# Production Caching
+aiocache==0.12.4
+
+# Health Checks & Monitoring
+py-healthcheck==6.1.1
+
+# Load Balancing & Rate Limiting
+slowapi==0.1.9
+limits==3.13.1
+
+# Security Hardening
+python-dotenv==1.0.0
+cryptography==46.0.7
+certifi==2026.2.25

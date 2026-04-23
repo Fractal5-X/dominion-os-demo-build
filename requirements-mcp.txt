@@ -1,0 +1,27 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - MCP (Model Context Protocol) Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Status: Production Ready
+# ═══════════════════════════════════════════════════════════════════════════
+
+# MCP Python SDK
+mcp==1.27.0
+
+# Async frameworks for MCP
+asyncio==3.4.3
+aiohttp==3.11.11
+aiofiles==24.1.0
+
+# JSON-RPC for MCP communication
+jsonrpclib-pelix==0.4.3.3
+jsonrpc-requests==0.4.0
+
+# WebSocket support for MCP
+websockets==14.1
+
+# SSE (Server-Sent Events) support
+sse-starlette==2.2.2
+
+# Additional protocol support
+msgpack==1.1.0
+cbor2==5.7.1

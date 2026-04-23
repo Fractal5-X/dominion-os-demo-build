@@ -1,0 +1,164 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Complete Requirements (All Services)
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Status: Production Ready - Burned Configuration
+# Generated: 2026-04-23
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CORE WEB FRAMEWORK & API
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Flask (existing services)
+Flask==3.1.3
+flask-cors==6.0.0
+Werkzeug==3.1.6
+
+# FastAPI (new API Gateway & OAuth)
+fastapi==0.135.1
+uvicorn[standard]==0.34.0
+starlette==0.44.0
+sse-starlette==2.2.2
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DATA VALIDATION & SERIALIZATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+pydantic==2.10.6
+pydantic-settings==2.7.1
+pydantic-core==2.27.2
+annotated-types==0.7.0
+msgpack==1.1.0
+cbor2==5.7.1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AUTHENTICATION & SECURITY
+# ═══════════════════════════════════════════════════════════════════════════
+
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+python-multipart==0.0.20
+PyJWT==2.12.0
+cryptography==46.0.7
+certifi==2026.2.25
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HTTP & NETWORKING
+# ═══════════════════════════════════════════════════════════════════════════
+
+httpx==0.28.1
+requests==2.33.0
+urllib3==2.6.3
+httpcore==1.0.8
+aiohttp==3.11.11
+websockets==14.1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOOGLE CLOUD PLATFORM
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Core GCP
+google-api-core==2.24.0
+google-auth==2.38.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
+googleapis-common-protos==1.66.0
+
+# Cloud Storage
+google-cloud-storage==2.19.0
+google-cloud-core==2.4.1
+
+# BigQuery
+google-cloud-bigquery==3.28.0
+google-cloud-bigquery-storage==2.28.0
+
+# Compute Engine
+google-cloud-compute==1.23.0
+
+# Monitoring & Logging
+google-cloud-monitoring==2.25.0
+google-cloud-logging==3.14.0
+
+# Secret Manager
+google-cloud-secret-manager==2.23.0
+
+# Protocol Buffers & gRPC
+protobuf==5.29.4
+grpcio==1.80.0
+grpc-google-iam-v1==0.13.1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MODEL CONTEXT PROTOCOL (MCP)
+# ═══════════════════════════════════════════════════════════════════════════
+
+mcp==1.27.0
+jsonrpclib-pelix==0.4.3.3
+jsonrpc-requests==0.4.0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DATA PROCESSING & GEOSPATIAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+pandas==3.0.1
+numpy==2.4.3
+geopandas==1.1.3
+shapely==2.1.2
+pyogrio==0.12.1
+pyproj==3.7.2
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ASYNC & CONCURRENCY
+# ═══════════════════════════════════════════════════════════════════════════
+
+anyio==4.8.0
+aiofiles==24.1.0
+asyncio==3.4.3
+
+# ═══════════════════════════════════════════════════════════════════════════
+# UTILITIES & HELPERS
+# ═══════════════════════════════════════════════════════════════════════════
+
+python-dateutil==2.9.0.post0
+python-dotenv==1.0.0
+click==8.3.1
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+blinker==1.9.0
+itsdangerous==2.2.0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SYSTEM & MONITORING
+# ═══════════════════════════════════════════════════════════════════════════
+
+psutil==7.1.3
+slowapi==0.1.9
+limits==3.13.1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TYPE CHECKING & DEVELOPMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+typing-extensions==4.12.2
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PARSING & SERIALIZATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+pyparsing==3.2.5
+packaging==26.0
+six==1.17.0
+charset-normalizer==3.4.7
+idna==3.11
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DOCUMENTATION GENERATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+asciidoc==10.2.1
+
+# ═══════════════════════════════════════════════════════════════════════════
+# END OF REQUIREMENTS
+# All packages burned at 14/14 UNIVERSAL_DOMINION authority
+# Zero regression guaranteed
+# ═══════════════════════════════════════════════════════════════════════════

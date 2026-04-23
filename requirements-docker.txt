@@ -1,0 +1,27 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Docker Deployment Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Deployment Target: Docker Containers & Kubernetes
+# ═══════════════════════════════════════════════════════════════════════════
+
+-r requirements-complete.txt
+
+# Container Optimization
+gunicorn==23.0.0
+gevent==24.15.1
+
+# Kubernetes Health Checks
+kubernetes==33.1.0
+openshift==0.13.3
+
+# Container Monitoring
+prometheus-client==1.1.1
+statsd==4.0.1
+
+# Container Logging
+python-json-logger==3.3.2
+structlog==24.5.1
+
+# Container Security
+python-dotenv==1.0.0
+certifi==2026.2.25

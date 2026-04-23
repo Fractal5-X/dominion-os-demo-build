@@ -1,0 +1,23 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Windows Deployment Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Deployment Target: Windows 10/11 & Windows Server
+# ═══════════════════════════════════════════════════════════════════════════
+
+-r requirements-complete.txt
+
+# Windows-specific ASGI server
+waitress==3.0.3
+
+# Windows Service Management
+pywin32==315; sys_platform == 'win32'
+wmi==1.5.1; sys_platform == 'win32'
+
+# Windows Process Management
+psutil==7.1.3
+
+# Windows Task Scheduler Integration
+python-crontab==3.5.0
+
+# Windows Path Handling
+pathlib2==3.0.1; python_version < '3.4'

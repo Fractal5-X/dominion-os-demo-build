@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Dominion OS - Google Cloud Platform Requirements
+# Authority: 14/14 UNIVERSAL_DOMINION
+# Status: Production Ready
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Google Cloud Core
+google-api-core==2.24.0
+google-auth==2.38.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
+googleapis-common-protos==1.66.0
+
+# Google Cloud Storage
+google-cloud-storage==2.19.0
+google-cloud-core==2.4.1
+
+# Google Cloud BigQuery
+google-cloud-bigquery==3.28.0
+google-cloud-bigquery-storage==2.28.0
+
+# Google Cloud Compute
+google-cloud-compute==1.23.0
+
+# Google Cloud Monitoring (optional)
+google-cloud-monitoring==2.25.0
+
+# Google Cloud Logging (optional)
+google-cloud-logging==3.14.0
+
+# Google Cloud Secret Manager (optional)
+google-cloud-secret-manager==2.23.0
+
+# Protocol Buffers
+protobuf==5.29.4
+grpcio==1.80.0
+grpc-google-iam-v1==0.13.1
