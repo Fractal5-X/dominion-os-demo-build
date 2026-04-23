@@ -16,9 +16,44 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYNC_ENV_FILE="${PHI_SYNC_ENV_FILE:-${SCRIPT_DIR}/live_ops_sync.env}"
+if [ -f "${SYNC_ENV_FILE}" ]; then
+    set -a
+    # shellcheck disable=SC1090
+    . "${SYNC_ENV_FILE}"
+    set +a
+fi
+
 # Configuration
-WORKSPACE_DIR="/workspaces/dominion-os-demo-build"
-COMMAND_CENTER_DIR="/workspaces/dominion-command-center"
+resolve_existing_dir() {
+    local candidate=""
+    for candidate in "$@"; do
+        [ -n "${candidate}" ] || continue
+        if [ -d "${candidate}" ]; then
+            printf '%s\n' "${candidate}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+WORKSPACE_DIR="$(
+    resolve_existing_dir \
+        "${DOMINION_WORKSPACE_DIR:-}" \
+        "/mnt/d/workspaces/dominion-os-demo-build" \
+        "/workspaces/dominion-os-demo-build" \
+        "/mnt/c/workspaces/dominion-os-demo-build" \
+    || echo "/workspaces/dominion-os-demo-build"
+)"
+COMMAND_CENTER_DIR="$(
+    resolve_existing_dir \
+        "${DOMINION_COMMAND_CENTER_DIR:-}" \
+        "/mnt/d/workspaces/dominion-command-center" \
+        "/workspaces/dominion-command-center" \
+        "/mnt/c/workspaces/dominion-command-center" \
+    || echo "/workspaces/dominion-command-center"
+)"
 LOG_DIR="${WORKSPACE_DIR}/logs"
 TELEMETRY_DIR="${WORKSPACE_DIR}/scripts/telemetry"
 TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
@@ -79,6 +114,49 @@ check_directories() {
     mkdir -p "$TELEMETRY_DIR"
 
     log_info "✅ All directories verified"
+    log_info "Workspace: $WORKSPACE_DIR"
+    log_info "Command Center: $COMMAND_CENTER_DIR"
+    return 0
+}
+
+run_docker_preflight() {
+    local docker_repair_script="$WORKSPACE_DIR/scripts/docker_repair_optimal.sh"
+    local docker_log="$LOG_DIR/docker_repair_${TIMESTAMP}.log"
+    local rc=0
+
+    if [ "${PHI_DOCKER_REPAIR_ON_START:-1}" != "1" ]; then
+        log_info "Docker pre-flight disabled (PHI_DOCKER_REPAIR_ON_START=${PHI_DOCKER_REPAIR_ON_START})"
+        return 0
+    fi
+
+    if ! command -v docker >/dev/null 2>&1; then
+        log_warn "Docker CLI not found; skipping pre-flight"
+        return 0
+    fi
+
+    if [ ! -x "$docker_repair_script" ]; then
+        log_warn "Docker repair script not found: $docker_repair_script"
+        return 0
+    fi
+
+    log_info "Running Docker pre-flight repair..."
+    set +e
+    bash "$docker_repair_script" >> "$docker_log" 2>&1
+    rc=$?
+    set -e
+
+    if [ "$rc" -eq 0 ]; then
+        log_info "✅ Docker pre-flight repair completed"
+        return 0
+    fi
+
+    if [ "$rc" -eq 2 ]; then
+        log_warn "Docker pre-flight partial (runtime capability limits); continuing startup"
+    elif [ "$rc" -eq 3 ]; then
+        log_warn "Docker pre-flight partial (container canary network/auth blocked); continuing startup"
+    else
+        log_warn "Docker pre-flight failed (exit $rc); continuing startup"
+    fi
     return 0
 }
 
@@ -87,6 +165,21 @@ start_monitors() {
     log_info "Starting background monitors..."
 
     cd "$WORKSPACE_DIR/scripts"
+
+    local sync_interval="${PHI_INTELLIGENT_SYNC_INTERVAL:-120}"
+    local gcs_enabled="${PHI_SYNC_GCS_ENABLED:-1}"
+    local gcs_min_interval="${PHI_SYNC_GCS_MIN_INTERVAL_SECONDS:-300}"
+    local local_mirror_enabled="${PHI_SYNC_LOCAL_MIRROR_ENABLED:-1}"
+    local local_mirror_path="${PHI_SYNC_LOCAL_MIRROR_PATH:-/mnt/d/workspaces/dominion-os-demo-build-live}"
+    local ecosystem_apply_enabled="${PHI_ECOSYSTEM_APPLY_SAFE_ENABLED:-1}"
+    local ecosystem_apply_every="${PHI_ECOSYSTEM_APPLY_SAFE_EVERY_CYCLES:-12}"
+    local local_machine_profile="${PHI_LOCAL_MACHINE_PROFILE:-AT2_LIVE_OPS}"
+    local local_perf_mode="${PHI_LOCAL_MACHINE_PERF_MODE:-MAX_PERFORMANCE}"
+    local local_cost_mode="${PHI_LOCAL_MACHINE_COST_MODE:-LOWEST_COST}"
+
+    export PHI_LOCAL_MACHINE_PROFILE="$local_machine_profile"
+    export PHI_LOCAL_MACHINE_PERF_MODE="$local_perf_mode"
+    export PHI_LOCAL_MACHINE_COST_MODE="$local_cost_mode"
 
     # Start PHI Monitor Supervisor
     if ! pgrep -f "phi_monitor_supervisor.sh" > /dev/null; then
@@ -109,10 +202,26 @@ start_monitors() {
     # Start Intelligent Sync Daemon
     if ! pgrep -f "phi_intelligent_sync_daemon.sh" > /dev/null; then
         log_info "Starting Intelligent Sync Daemon..."
+        PHI_INTELLIGENT_SYNC_INTERVAL="$sync_interval" \
+        PHI_SYNC_GCS_ENABLED="$gcs_enabled" \
+        PHI_SYNC_GCS_MIN_INTERVAL_SECONDS="$gcs_min_interval" \
+        PHI_SYNC_LOCAL_MIRROR_ENABLED="$local_mirror_enabled" \
+        PHI_SYNC_LOCAL_MIRROR_PATH="$local_mirror_path" \
         bash phi_intelligent_sync_daemon.sh run >> "$LOG_DIR/phi_intelligent_sync_daemon.log" 2>&1 &
         sleep 1
     else
         log_info "✅ Intelligent Sync Daemon already running"
+    fi
+
+    # Start Ecosystem Optimizer Daemon
+    if ! pgrep -f "ecosystem_optimizer_daemon.sh" > /dev/null; then
+        log_info "Starting Ecosystem Optimizer Daemon..."
+        PHI_ECOSYSTEM_APPLY_SAFE_ENABLED="$ecosystem_apply_enabled" \
+        PHI_ECOSYSTEM_APPLY_SAFE_EVERY_CYCLES="$ecosystem_apply_every" \
+        bash ecosystem_optimizer_daemon.sh run >> "$LOG_DIR/ecosystem_optimizer_daemon.log" 2>&1 &
+        sleep 1
+    else
+        log_info "✅ Ecosystem Optimizer Daemon already running"
     fi
 
     log_info "✅ All monitors started"
@@ -161,17 +270,17 @@ verify_services() {
 
     # Check monitors
     local monitors_count=0
-    for monitor in phi_monitor_supervisor sovereign_monitor phi_intelligent_sync_daemon; do
+    for monitor in phi_monitor_supervisor sovereign_monitor phi_intelligent_sync_daemon ecosystem_optimizer_daemon; do
         if pgrep -f "$monitor" > /dev/null; then
             monitors_count=$((monitors_count + 1))
         fi
     done
 
-    if [ "$monitors_count" -ge 3 ]; then
-        log_info "✅ Background monitors: $monitors_count/3 running"
+    if [ "$monitors_count" -ge 4 ]; then
+        log_info "✅ Background monitors: $monitors_count/4 running"
         healthy_count=$((healthy_count + 1))
     else
-        log_warn "⚠️  Background monitors: Only $monitors_count/3 running"
+        log_warn "⚠️  Background monitors: Only $monitors_count/4 running"
         all_healthy=false
     fi
 
@@ -214,7 +323,7 @@ show_status() {
     echo ""
 
     echo "=== BACKGROUND MONITORS ==="
-    ps aux | grep -E "phi_monitor|sovereign|sync_daemon" | grep -v grep
+    ps aux | grep -E "phi_monitor|sovereign|sync_daemon|ecosystem_optimizer" | grep -v grep
     echo ""
 
     echo "=== AUTHORITY STATUS ==="
@@ -236,6 +345,7 @@ stop_services() {
     pkill -f 'phi_monitor_supervisor.sh' || true
     pkill -f 'sovereign_monitor.sh' || true
     pkill -f 'phi_intelligent_sync_daemon.sh' || true
+    pkill -f 'ecosystem_optimizer_daemon.sh' || true
 
     log_info "✅ All services stopped"
 }
@@ -253,6 +363,10 @@ start_all() {
         log_error "Directory check failed"
         exit 1
     fi
+    echo ""
+
+    # Step 1.5: Docker pre-flight
+    run_docker_preflight
     echo ""
 
     # Step 2: Start monitors
