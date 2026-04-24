@@ -84,6 +84,33 @@ append_report() {
   printf '%s\n' "$*" >> "${REPORT_FILE}"
 }
 
+cloud_governor_project_scope() {
+  if [ -n "${PHI_ECOSYSTEM_ALL_GCP_PROJECTS:-}" ]; then
+    printf '%s\n' "${PHI_ECOSYSTEM_ALL_GCP_PROJECTS}"
+  else
+    printf '%s\n' "${PROJECTS}"
+  fi
+}
+
+run_cloud_governor() {
+  local mode="$1"
+  local scope
+  scope="$(cloud_governor_project_scope)"
+
+  env \
+    PHI_SYNC_ENV_FILE=/dev/null \
+    PHI_PUBLIC_GCP_PROJECT="${PHI_PUBLIC_GCP_PROJECT:-dominion-core-prod}" \
+    PHI_PUBLIC_GCP_REGION="${PHI_PUBLIC_GCP_REGION:-${GCP_REGION}}" \
+    PHI_ECOSYSTEM_GCP_REGION="${GCP_REGION}" \
+    PHI_ECOSYSTEM_ALL_GCP_PROJECTS="${scope}" \
+    PHI_PUBLIC_CLOUD_RUN_ALLOWLIST="${PHI_PUBLIC_CLOUD_RUN_ALLOWLIST:-dominion-os-demo,phi-askphi-widget,phi-oauth-server,dominion-demo-service}" \
+    PHI_CLOUD_GOVERNOR_ENFORCE_SINGLE_BILLING_PUBLIC_PROJECT="${PHI_CLOUD_GOVERNOR_ENFORCE_SINGLE_BILLING_PUBLIC_PROJECT:-1}" \
+    PHI_CLOUD_GOVERNOR_ENFORCE_NONOFFICIAL_NO_PUBLIC="${PHI_CLOUD_GOVERNOR_ENFORCE_NONOFFICIAL_NO_PUBLIC:-1}" \
+    PHI_CLOUD_GOVERNOR_ENSURE_ALLOWLIST_PUBLIC="${PHI_CLOUD_GOVERNOR_ENSURE_ALLOWLIST_PUBLIC:-1}" \
+    PHI_BILLING_ACCOUNT_PRIMARY="${PHI_BILLING_ACCOUNT_PRIMARY:-}" \
+    bash "${CLOUD_GOVERNOR_SCRIPT}" "${mode}"
+}
+
 run_repair_actions() {
   log INFO "Repair phase start"
   if [ -x "${SCRIPT_DIR}/docker_repair_optimal.sh" ]; then
@@ -96,7 +123,7 @@ run_repair_actions() {
   bash "${SCRIPT_DIR}/ecosystem_optimizer.sh" apply-safe >> "${LOG_FILE}" 2>&1 || true
   bash "${SCRIPT_DIR}/ecosystem_optimizer.sh" apply-aggressive >> "${LOG_FILE}" 2>&1 || true
   if [ "${PHI_CLOUD_GOVERNOR_APPLY_ON_REPAIR:-1}" = "1" ] && [ -x "${CLOUD_GOVERNOR_SCRIPT}" ]; then
-    bash "${CLOUD_GOVERNOR_SCRIPT}" apply >> "${LOG_FILE}" 2>&1 || true
+    run_cloud_governor apply >> "${LOG_FILE}" 2>&1 || true
   fi
   log INFO "Repair phase complete"
 }
@@ -123,11 +150,11 @@ refresh_cloud_governor_status() {
   fi
   case "${MODE}" in
     verify|verify-only)
-      bash "${CLOUD_GOVERNOR_SCRIPT}" audit >> "${LOG_FILE}" 2>&1 || true
+      run_cloud_governor audit >> "${LOG_FILE}" 2>&1 || true
       ;;
     repair|repair-and-verify)
       if [ ! -f "${CLOUD_GOVERNOR_STATUS_FILE}" ]; then
-        bash "${CLOUD_GOVERNOR_SCRIPT}" audit >> "${LOG_FILE}" 2>&1 || true
+        run_cloud_governor audit >> "${LOG_FILE}" 2>&1 || true
       fi
       ;;
   esac

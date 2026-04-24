@@ -85,6 +85,17 @@ check_unshare() {
 
 canary_run() {
   rm -f "${CANARY_OUT}" "${CANARY_ERR}"
+  docker_cmd rm -f docker-repair-canary >/dev/null 2>&1 || true
+  if docker_cmd image inspect dominion/empty:latest >/dev/null 2>&1; then
+    if docker_cmd create --name docker-repair-canary --entrypoint /nope dominion/empty:latest >"${CANARY_OUT}" 2>"${CANARY_ERR}"; then
+      docker_cmd rm -f docker-repair-canary >/dev/null 2>&1 || true
+      return 0
+    fi
+    docker_cmd rm -f docker-repair-canary >/dev/null 2>&1 || true
+    if grep -Eqi 'operation not permitted|unshare|failed to (register|extract) layer|driver not supported|mount.*permission denied' "${CANARY_ERR}"; then
+      return 2
+    fi
+  fi
   if docker_cmd run --rm --pull=missing hello-world >"${CANARY_OUT}" 2>"${CANARY_ERR}"; then
     return 0
   fi
@@ -138,18 +149,22 @@ main() {
     canary_rc=$?
   fi
 
+  if in_container && ! check_unshare; then
+    echo "[repair] host restriction detected: unshare is blocked in this container runtime."
+    echo "[repair] docker API is available, but pulling/running nested containers can fail without extra host privileges."
+    echo "[repair] to fully enable nested containers, run this workspace with --privileged or mount a host docker socket."
+    if [[ "${canary_rc}" -eq 1 ]]; then
+      echo "[repair] additional canary stderr preview:"
+      sed -n '1,40p' "${CANARY_ERR}" || true
+    fi
+    exit 2
+  fi
+
   if [[ "${canary_rc}" -eq 1 ]]; then
     echo "[repair] canary failed for a non-permission reason (network/auth/image availability)."
     echo "[repair] stderr preview:"
     sed -n '1,40p' "${CANARY_ERR}" || true
     exit 3
-  fi
-
-  if in_container && ! check_unshare; then
-    echo "[repair] host restriction detected: unshare is blocked in this container runtime."
-    echo "[repair] docker API is available, but pulling/running nested containers can fail without extra host privileges."
-    echo "[repair] to fully enable nested containers, run this workspace with --privileged or mount a host docker socket."
-    exit 2
   fi
 
   echo "[repair] container run failed due permission restrictions in current runtime."

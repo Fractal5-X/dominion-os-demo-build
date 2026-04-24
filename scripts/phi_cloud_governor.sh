@@ -4,10 +4,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SYNC_ENV_FILE="${PHI_SYNC_ENV_FILE:-${SCRIPT_DIR}/live_ops_sync.env}"
 if [ -f "${SYNC_ENV_FILE}" ]; then
+  ENV_SNAPSHOT="$(mktemp "${TMPDIR:-/tmp}/phi-cloud-env.XXXXXX")"
+  export -p > "${ENV_SNAPSHOT}"
   set -a
   # shellcheck disable=SC1090
   . "${SYNC_ENV_FILE}"
   set +a
+  # Preserve explicit caller overrides while still using live_ops_sync.env as defaults.
+  # shellcheck disable=SC1090
+  . "${ENV_SNAPSHOT}"
+  rm -f "${ENV_SNAPSHOT}"
 fi
 
 TELEMETRY_DIR="${SCRIPT_DIR}/telemetry"

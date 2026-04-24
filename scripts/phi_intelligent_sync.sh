@@ -39,7 +39,7 @@ SYNC_LOCAL_SOURCE_ROOT_RAW="${PHI_SYNC_LOCAL_SOURCE_ROOT:-${REPO_DIR}}"
 SYNC_LOCAL_MIRROR_PATH_RAW="${PHI_SYNC_LOCAL_MIRROR_PATH:-D:\\workspaces\\dominion-os-demo-build-live}"
 SYNC_LOCAL_MIRROR_FALLBACK_PATH_RAW="${PHI_SYNC_LOCAL_MIRROR_FALLBACK_PATH:-/workspaces/dominion-os-demo-build-live}"
 SYNC_LOCAL_MIRROR_PATHS="${PHI_SYNC_LOCAL_MIRROR_PATHS:-scripts/telemetry dist/command_core reports}"
-SYNC_LOCAL_MIRROR_EXCLUDES="${PHI_SYNC_LOCAL_MIRROR_EXCLUDES:-.git/ logs/ scripts/logs/ scripts/reports/ .venv/ node_modules/}"
+SYNC_LOCAL_MIRROR_EXCLUDES="${PHI_SYNC_LOCAL_MIRROR_EXCLUDES:-.git/ logs/ scripts/logs/ .venv/ node_modules/}"
 SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS="${PHI_SYNC_LOCAL_MIRROR_MIN_INTERVAL_SECONDS:-30}"
 SYNC_LOCAL_MIRROR_HEARTBEAT_FILE="${TELEMETRY_DIR}/.last_local_mirror_sync"
 
