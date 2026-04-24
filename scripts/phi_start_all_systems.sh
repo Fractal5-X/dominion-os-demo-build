@@ -101,6 +101,47 @@ start_stub() {
   return 1
 }
 
+start_chatgpt_gateway() {
+  local label="ChatGPT-Gateway"
+  local port=5004
+  local log_name="chatgpt_gateway.log"
+  local pid_name="chatgpt_gateway.pid"
+  local pid_file="${LOG_DIR}/${pid_name}"
+  local log_file="${LOG_DIR}/${log_name}"
+
+  say "[$(date -u +'%Y-%m-%d %H:%M:%S')] Starting ${label}..."
+  if health_ok "${port}"; then
+    say "✅ ${label} already running on port ${port}"
+    return 0
+  fi
+
+  if [ -f "${pid_file}" ]; then
+    local stale_pid
+    stale_pid="$(cat "${pid_file}" 2>/dev/null || true)"
+    if [ -n "${stale_pid}" ] && kill -0 "${stale_pid}" 2>/dev/null; then
+      kill "${stale_pid}" 2>/dev/null || true
+      sleep 0.5
+    fi
+    rm -f "${pid_file}"
+  fi
+
+  cd "/workspaces/dominion-command-center/chatgpt-gateway"
+  if command -v setsid >/dev/null 2>&1; then
+    setsid bash -c "source .venv/bin/activate && python3 main.py" >> "${log_file}" 2>&1 < /dev/null &
+  else
+    nohup bash -c "source .venv/bin/activate && python3 main.py" >> "${log_file}" 2>&1 &
+  fi
+  echo $! > "${pid_file}"
+
+  if wait_for_health "${port}"; then
+    say "✅ ${label} started successfully (PID: $(cat "${pid_file}"), Port: ${port})"
+    return 0
+  fi
+
+  say "❌ ${label} failed to reach healthy state on port ${port}"
+  return 1
+}
+
 ensure_docker_preflight() {
   local docker_repair_script="${SCRIPT_DIR}/docker_repair_optimal.sh"
   local docker_repair_log="${LOG_DIR}/docker_repair_$(date -u +%Y%m%d_%H%M%S).log"
@@ -191,7 +232,7 @@ start_stub "Billing-Service" "billing-service" 5001 "billing_service.log" "billi
 start_stub "Dominion-Command-Core" "dominion-command-core" 5002 "demo_app.log" "demo_app.pid"
 start_stub "Dominion-Java-LiveOps-Site" "java-live-ops" 8090 "java_live_ops.log" "java_live_ops.pid"
 start_stub "Sidecar-Service" "sidecar-service" 5003 "sidecar.log" "sidecar.pid"
-start_stub "ChatGPT-Gateway" "chatgpt-gateway" 5004 "chatgpt_gateway.log" "chatgpt_gateway.pid"
+start_chatgpt_gateway
 
 say "PHASE 4: LEGACY SYSTEMS"
 start_stub "Politics-Local-Legacy" "politics-local-legacy" 5005 "politics_legacy.log" "politics_legacy.pid"
