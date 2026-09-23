@@ -1,35 +1,17 @@
-# Dominion OS Demo Build
+# Dominion OS Demo Build — Public Mirror Retired
 
-![Demo](https://img.shields.io/badge/Demo-Ready-brightgreen)
-[![Dominion OS](https://img.shields.io/badge/Depends%20on-dominion--os--1.0-blue)](https://github.com/Fractal5-Solutions/dominion-os-1.0)
-![Cloud Run](https://img.shields.io/badge/Deployed-Google%20Cloud%20Run-4285F4?logo=googlecloud&logoColor=white)
-![License](https://img.shields.io/badge/license-Commercial-blue)
+This public mirror is **retired and contains no approved Dominion OS implementation surface**.
 
-This repo demonstrates consuming the sibling [`dominion-os-1.0`](https://github.com/Fractal5-Solutions/dominion-os-1.0) toy kernel to:
+Current public-safe demonstrations and release evidence are published through Fractal5 Solutions' governed public proof surfaces. Private source code, operational automation, cloud identity details, credentials, signing material, internal APIs, infrastructure definitions, production controls, and proprietary implementation belong only in Fractal5-controlled private repositories.
 
-- Build a JSON image
-- Run a demo and save outputs to `dist/`
+No deployment, runtime, source, or security maturity claim should be inferred from historical commits, tags, branches, forks, cached clones, pull-request diffs, or other legacy Git objects associated with this repository.
 
-Quickstart
+For current product information and public demonstrations, use:
 
-- Build: `python demo_build.py build`
-- Run demo: `python demo_build.py run`
-- Tests: `python -m unittest`
+- https://www.fractal5solutions.com/demo-1
+- https://www.fractal5solutions.com/dominion-os
+- https://fractal5-solutions.github.io/dominion-os-demo-build/
 
-Command Core (full experience)
+Security concerns should be reported privately through:
 
-- Run interactive dashboard (small scale):
-    - `python demo_build.py command-core --duration 120 --scale small`
-- Headless, generate artifacts only:
-    - `python demo_build.py command-core --duration 100 --scale medium --no-ui`
-- Artifacts are written to `dist/command_core/` as `events.log`, `session.json`, and `summary.txt`.
-
-Autopilot (NHITL)
-
-- Single automated run at large scale:
-    - `python demo_build.py autopilot --scale large --duration 300`
-- Multiple back-to-back runs with interval:
-    - `python demo_build.py autopilot --scale medium --duration 120 --runs 3 --interval-ms 500`
-- Output: flight summaries saved under `dist/command_core/flight_*.json`.
-
-Note: This demo imports `dominion_os` from the sibling path `../dominion-os-1.0` without installing it. This keeps it network-free.
+- https://www.fractal5solutions.com/#contact
