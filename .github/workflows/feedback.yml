@@ -1,9 +1,0 @@
-name: feedback
-on:
-  pull_request:
-    branches: [ main ]
-jobs:
-  ok:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ok
