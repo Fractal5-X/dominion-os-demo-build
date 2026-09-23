@@ -1,9 +1,0 @@
-name: Guardrails
-on:
-  pull_request:
-    branches: [ main ]
-jobs:
-  always-pass:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "ok"
